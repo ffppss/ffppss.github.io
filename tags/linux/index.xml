@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>linux on 杂货铺</title>
+    <link>https://ffppss.github.io/tags/linux/</link>
+    <description>Recent content in linux on 杂货铺</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 16 Apr 2020 12:03:39 +0800</lastBuildDate>
+    
+	<atom:link href="https://ffppss.github.io/tags/linux/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Alpine基本安装</title>
+      <link>https://ffppss.github.io/posts/linux/alpine%E5%9F%BA%E6%9C%AC%E5%AE%89%E8%A3%85/</link>
+      <pubDate>Thu, 16 Apr 2020 12:03:39 +0800</pubDate>
+      
+      <guid>https://ffppss.github.io/posts/linux/alpine%E5%9F%BA%E6%9C%AC%E5%AE%89%E8%A3%85/</guid>
+      <description>alipine的安装 todo </description>
+    </item>
+    
+  </channel>
+</rss>
