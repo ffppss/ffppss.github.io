@@ -10,7 +10,7 @@
         content="fps"/>
 
   
-  <meta name="description" content="alipine的安装 todo "/>
+  <meta name="description" content="alipine的安装 1: 启动虚拟机，首次启动时使用root这个用户名登录，不需要密码 2: 登录成功后，执行setup-alpine进入安装向导，向导会询问你一系列的问题，然后等待你的输入。如果途中操作有失误，可以按Ctrl &#43; c退出向导，再重新开始向导 3、下面解释下每个问题的含义： Select keyboard layout [none]: 选择键盘布局，系统默认给你选了none，直接回车 Enter system hostname (short form, e.g. &#39;foo&#39;) [localhost] 选择虚拟机host名称，系统给你选了localhost，没有特殊需要的话直接回车 Which one do you want to initialize? (or &#39;?&#39; or &#39;done&#39;) [eth0] 选择要不要设置网卡，系统给你选了需要初始化eth0那张网卡，直接回车 Ip address for eth0? (or &#39;dhcp&#39;, &#39;none&#39;, &#39;?&#39;) [dhcp] 输入eth0网卡的IP地址，或者直接通过dhcp协议自动获取IP，系统给你选了dhcp，直接回车 Do you want to do any manual network configuration? [no] 还需要手工修改网卡的其他配置吗？系统给你选了no，直接回车 Changeing password for root New password: 安装完成后，就不能像现在这样不用密码就登录了，系统提示你输入root帐号的密码。 Retype Password: 确认一遍密码 Which timezone are you in?"/>
   
 
   
@@ -108,9 +108,74 @@
           <span class="date">2020.04.16</span>
         </div>
         <div class="post_content markdown"><h2 id="alipine的安装">alipine的安装</h2>
-<pre><code>todo
-</code></pre><p><img src="../../../images/100.jpg" alt=""></p>
-</div>
+<pre><code>1: 启动虚拟机，首次启动时使用root这个用户名登录，不需要密码
+2: 登录成功后，执行setup-alpine进入安装向导，向导会询问你一系列的问题，然后等待你的输入。如果途中操作有失误，可以按Ctrl + c退出向导，再重新开始向导
+3、下面解释下每个问题的含义：
+	Select keyboard layout [none]: 
+    选择键盘布局，系统默认给你选了none，直接回车
+
+    Enter system hostname (short form, e.g. 'foo') [localhost]
+    选择虚拟机host名称，系统给你选了localhost，没有特殊需要的话直接回车
+
+    Which one do you want to initialize? (or '?' or 'done') [eth0]
+    选择要不要设置网卡，系统给你选了需要初始化eth0那张网卡，直接回车
+
+    Ip address for eth0? (or 'dhcp', 'none', '?') [dhcp]
+    输入eth0网卡的IP地址，或者直接通过dhcp协议自动获取IP，系统给你选了dhcp，直接回车
+
+    Do you want to do any manual network configuration? [no]
+    还需要手工修改网卡的其他配置吗？系统给你选了no，直接回车
+
+    Changeing password for root
+    New password:
+    安装完成后，就不能像现在这样不用密码就登录了，系统提示你输入root帐号的密码。
+    Retype Password:
+    确认一遍密码
+
+    Which timezone are you in? ('?' for list) [UTC]
+    输入时区，国内可以输入&quot;Asia/Shanghai&quot;
+
+    HTTP/FTP pxory URL?
+    需要使用HTTP代理连接网络吗？一般不需要，可以直接回车
+
+    Enter mirror number (1-21) or URL to add (or r/f/e/done) [f]
+    Alpine Linux自带的包管理器需要联网下载软件包,要是想使用中文镜像就输入e编辑，不然就随机选个吧。
+
+    Which SSH server? ('openssh', 'dropbear' or 'none') [openssh]
+    SSH服务器（用于登录Linux）有两种可供选择，默认选择openssh，回车
+
+    Which NTP client to run? ('busybox', 'openntpd', 'chorony' or 'none') [chrony]
+    选择NTP客户端(用来调整系统时钟)的类型，保持默认的chrony即可，回车
+
+    Available disks are:
+      sda   (8.6 GB ATA    VBOX HARDDISK    )
+    Which disk(s) would you like to use? (or '?' for help or 'none') [none]
+    这一步比较关键，系统发现了有块8.6GB大小，名称叫sda的硬盘
+    问你需不需要使用硬盘，因为Alpine Linux可以运行在内存里，这里的默认选项是不使用硬盘
+    所以要手动键入sda，后面的步骤才会将系统安装在硬盘上
+
+    The following disk is selected:
+      sda   (8.6 GB ATA      VBOX HARDDISK    )
+    How would you like to use it? ('sys', 'data', 'lvm' or '?' for help) [?]
+    以何种方式安装系统，这里需要键入&quot;sys&quot;，表示把整个系统安装在硬盘上。
+    其他选项并不适用于虚拟机
+
+    WARNING: The following disk(s) will be erased:
+      sda   (8.6 GB ATA      VBOX HARDDISK   )
+    WARNING: Erase the above disk(s) and continue? [y/N]
+    向导让你确认选择的sda磁盘上的数据会全部丢失
+    虚拟机磁盘，初始肯定是没数据的，键入&quot;y&quot;确认
+
+    如果你的虚拟机硬盘之前安装过别的，可能会提示如下
+    /dev/sda1 contains a ext4 file system
+    Proceed anyway(y,N)
+    输入&quot;y&quot;继续啦...
+
+    安装完后会提示你
+    Instalation is complete. Please reboot
+    安装完成，请重启
+4、/etc/ssh/sshd_config   PermitRootLogin yes
+</code></pre></div>
         <div class="post_footer">
           
           <div class="meta">

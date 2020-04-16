@@ -17,7 +17,7 @@
       <pubDate>Thu, 16 Apr 2020 12:03:39 +0800</pubDate>
       
       <guid>https://ffppss.github.io/posts/linux/alpine%E5%9F%BA%E6%9C%AC%E5%AE%89%E8%A3%85/</guid>
-      <description>alipine的安装 todo </description>
+      <description>alipine的安装 1: 启动虚拟机，首次启动时使用root这个用户名登录，不需要密码 2: 登录成功后，执行setup-alpine进入安装向导，向导会询问你一系列的问题，然后等待你的输入。如果途中操作有失误，可以按Ctrl + c退出向导，再重新开始向导 3、下面解释下每个问题的含义： Select keyboard layout [none]: 选择键盘布局，系统默认给你选了none，直接回车 Enter system hostname (short form, e.g. &#39;foo&#39;) [localhost] 选择虚拟机host名称，系统给你选了localhost，没有特殊需要的话直接回车 Which one do you want to initialize? (or &#39;?&#39; or &#39;done&#39;) [eth0] 选择要不要设置网卡，系统给你选了需要初始化eth0那张网卡，直接回车 Ip address for eth0? (or &#39;dhcp&#39;, &#39;none&#39;, &#39;?&#39;) [dhcp] 输入eth0网卡的IP地址，或者直接通过dhcp协议自动获取IP，系统给你选了dhcp，直接回车 Do you want to do any manual network configuration? [no] 还需要手工修改网卡的其他配置吗？系统给你选了no，直接回车 Changeing password for root New password: 安装完成后，就不能像现在这样不用密码就登录了，系统提示你输入root帐号的密码。 Retype Password: 确认一遍密码 Which timezone are you in?</description>
     </item>
     
   </channel>
