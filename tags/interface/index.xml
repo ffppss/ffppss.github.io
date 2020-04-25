@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>interface on 无尽光芒</title>
+    <link>https://ffppss.github.io/tags/interface/</link>
+    <description>Recent content in interface on 无尽光芒</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Fri, 24 Apr 2020 17:49:40 +0800</lastBuildDate>
+    
+	<atom:link href="https://ffppss.github.io/tags/interface/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Java 8新特性：接口默认方法与静态方法</title>
+      <link>https://ffppss.github.io/posts/java8%E6%96%B0%E7%89%B9%E6%80%A7%E4%B9%8B%E6%8E%A5%E5%8F%A3%E9%BB%98%E8%AE%A4%E6%96%B9%E6%B3%95%E4%B8%8E%E9%9D%99%E6%80%81%E6%96%B9%E6%B3%95/</link>
+      <pubDate>Fri, 24 Apr 2020 17:49:40 +0800</pubDate>
+      
+      <guid>https://ffppss.github.io/posts/java8%E6%96%B0%E7%89%B9%E6%80%A7%E4%B9%8B%E6%8E%A5%E5%8F%A3%E9%BB%98%E8%AE%A4%E6%96%B9%E6%B3%95%E4%B8%8E%E9%9D%99%E6%80%81%E6%96%B9%E6%B3%95/</guid>
+      <description>有这样一些场景，如果一个接口要添加一个方法，那所有的接口实现类都要去实现，而某些实现类根本就不需要实现这个方法也要写一个空实现，所以接口默认方法就是为了解决这个问题。 接口静态方法类似于默认方法，但是我</description>
+    </item>
+    
+  </channel>
+</rss>

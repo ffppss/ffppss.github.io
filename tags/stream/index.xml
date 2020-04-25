@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Stream on 无尽光芒</title>
+    <link>https://ffppss.github.io/tags/stream/</link>
+    <description>Recent content in Stream on 无尽光芒</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Fri, 24 Apr 2020 17:49:40 +0800</lastBuildDate>
+    
+	<atom:link href="https://ffppss.github.io/tags/stream/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Java 8新特性：Stream API</title>
+      <link>https://ffppss.github.io/posts/java8%E6%96%B0%E7%89%B9%E6%80%A7%E4%B9%8Bstream-api/</link>
+      <pubDate>Fri, 24 Apr 2020 17:49:40 +0800</pubDate>
+      
+      <guid>https://ffppss.github.io/posts/java8%E6%96%B0%E7%89%B9%E6%80%A7%E4%B9%8Bstream-api/</guid>
+      <description>Java8新增的Stream API与InputStream和OutputStream是完全不同的概念，Stream API是对Java中集合操作的增强，可以利用它进行各种过滤、排序、分组、聚合等操作。S</description>
+    </item>
+    
+  </channel>
+</rss>

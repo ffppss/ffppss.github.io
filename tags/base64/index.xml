@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Base64 on 无尽光芒</title>
+    <link>https://ffppss.github.io/tags/base64/</link>
+    <description>Recent content in Base64 on 无尽光芒</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Fri, 24 Apr 2020 17:49:40 +0800</lastBuildDate>
+    
+	<atom:link href="https://ffppss.github.io/tags/base64/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Java 8新特性：Base64</title>
+      <link>https://ffppss.github.io/posts/java8%E6%96%B0%E7%89%B9%E6%80%A7%E4%B9%8Bbase64/</link>
+      <pubDate>Fri, 24 Apr 2020 17:49:40 +0800</pubDate>
+      
+      <guid>https://ffppss.github.io/posts/java8%E6%96%B0%E7%89%B9%E6%80%A7%E4%B9%8Bbase64/</guid>
+      <description>在Java 8中，Base64编码已经成为Java类库的标准，Java 8 内置了 Base64 编码的编码器和解码器。 Base64工具类提供了一套静态方法获取下面三种BASE64编解码器： **基本：**输出被映射到一组</description>
+    </item>
+    
+  </channel>
+</rss>

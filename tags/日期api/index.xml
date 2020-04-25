@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>日期API on 无尽光芒</title>
+    <link>https://ffppss.github.io/tags/%E6%97%A5%E6%9C%9Fapi/</link>
+    <description>Recent content in 日期API on 无尽光芒</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Fri, 24 Apr 2020 17:49:40 +0800</lastBuildDate>
+    
+	<atom:link href="https://ffppss.github.io/tags/%E6%97%A5%E6%9C%9Fapi/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Java 8新特性：新的时间和日期API</title>
+      <link>https://ffppss.github.io/posts/java8%E6%96%B0%E7%89%B9%E6%80%A7%E4%B9%8B%E6%96%B0%E7%9A%84%E6%97%B6%E9%97%B4%E5%92%8C%E6%97%A5%E6%9C%9Fapi/</link>
+      <pubDate>Fri, 24 Apr 2020 17:49:40 +0800</pubDate>
+      
+      <guid>https://ffppss.github.io/posts/java8%E6%96%B0%E7%89%B9%E6%80%A7%E4%B9%8B%E6%96%B0%E7%9A%84%E6%97%B6%E9%97%B4%E5%92%8C%E6%97%A5%E6%9C%9Fapi/</guid>
+      <description>Java 8另一个新增的重要特性就是引入了新的时间和日期API，它们被包含在java.time包中。借助新的时间和日期API可以以更简洁的方法处理时间和日期。 在介绍本篇文章内容之前，我们先来讨论Java 8为什</description>
+    </item>
+    
+  </channel>
+</rss>

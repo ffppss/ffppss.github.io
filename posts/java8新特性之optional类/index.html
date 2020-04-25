@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="zh-cn" >
+<head>
+  <meta charset="utf-8"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+  
+  <meta name="author"
+        content="Zeuk"/>
+
+  
+  <meta name="description" content="这是Java 8新增的一个类，用以解决程序中常见的NullPointerException异常问题。本篇文章将详细介绍Optional类，以及如何用它消除代码中的null检查。 避免使用null检查 作为J"/>
+  
+
+  
+  
+  <meta name="keywords" content="Hugo, theme, zozo"/>
+  
+
+  
+  <link rel="canonical" href="https://ffppss.github.io/posts/java8%E6%96%B0%E7%89%B9%E6%80%A7%E4%B9%8Boptional%E7%B1%BB/"/>
+
+  
+
+  <title>Java 8新特性：Optional类 &middot; 无尽光芒</title>
+
+  <link rel="shortcut icon" href="https://ffppss.github.io/images/favicon.ico"/>
+  <link rel="stylesheet" href="https://ffppss.github.io/css/animate.min.css"/>
+  <link rel="stylesheet" href="https://ffppss.github.io/css/remixicon.css"/>
+  <link rel="stylesheet" href="https://ffppss.github.io/css/zozo.css"/>
+  <link rel="stylesheet" href="https://ffppss.github.io/css/highlight.css"/>
+  <link rel="stylesheet" href="https://ffppss.github.io/css/custom.css"/>
+
+  
+  
+
+  <script>
+    (function(d) {
+      var config = {
+        kitId: 'kfn1kkp',
+        scriptTimeout: 3000,
+        async: true
+      },
+      h=d.documentElement,t=setTimeout(function(){h.className=h.className.replace(/\bwf-loading\b/g,"")+" wf-inactive";},config.scriptTimeout),tk=d.createElement("script"),f=false,s=d.getElementsByTagName("script")[0],a;h.className+=" wf-loading";tk.src='https://use.typekit.net/'+config.kitId+'.js';tk.async=true;tk.onload=tk.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete"&&a!="loaded")return;f=true;clearTimeout(t);try{Typekit.load(config)}catch(e){}};s.parentNode.insertBefore(tk,s)
+    })(document);
+  </script>
+</head>
+
+<body>
+<div class="main animated">
+  <div class="nav_container animated fadeInDown">
+  <div class="site_nav" id="site_nav">
+    <ul>
+      
+      <li>
+        <a href="/">首页</a>
+      </li>
+      
+      <li>
+        <a href="/posts/">归档</a>
+      </li>
+      
+      <li>
+        <a href="/tags/">标签</a>
+      </li>
+      
+      <li>
+        <a href="/about/">关于</a>
+      </li>
+      
+    </ul>
+  </div>
+  <div class="menu_icon">
+    <a id="menu_icon"><i class="remixicon-links-line"></i></a>
+  </div>
+</div>
+
+  <div class="header animated fadeInDown">
+  <div class="site_title_container">
+    <div class="site_title">
+      <h1>
+        <a href="https://ffppss.github.io">
+          <span>无尽光芒</span>
+          <img src="https://ffppss.github.io/images/logo.svg"/>
+        </a>
+      </h1>
+    </div>
+    <div class="description">
+      <p class="sub_title">老冯的杂货铺</p>
+      <div class="text_center">
+        <img src="https://ffppss.github.io/images/ball.png" style="width:64px;height:64px;"/>
+      </div>
+      <div class="my_socials">
+        
+        
+        <script>
+        </script>
+        <a href="%20" title="github" target="_blank"><i class="remixicon-github-fill"></i></a>
+        
+        
+        
+        <script>
+        </script>
+        <a href="%20" title="mail" target="_blank"><i class="remixicon-mail-fill"></i></a>
+        
+        
+        
+        <script>
+        </script>
+        <a href="%20" title="qq" target="_blank"><i class="remixicon-qq-fill"></i></a>
+        
+        
+        
+        <script>
+        </script>
+        <a href="%20" title="wechat" target="_blank"><i class="remixicon-wechat-fill"></i></a>
+        
+        
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+  <div class="content">
+    <div class="post_page">
+      <div class="post animated fadeInDown">
+        <div class="post_title post_detail_title">
+          <h2><a href='/posts/java8%E6%96%B0%E7%89%B9%E6%80%A7%E4%B9%8Boptional%E7%B1%BB/'>Java 8新特性：Optional类</a></h2>
+          <span class="date">2020.04.24</span>
+        </div>
+        <div class="post_content markdown"><p>这是Java 8新增的一个类，用以解决程序中常见的<code>NullPointerException</code>异常问题。本篇文章将详细介绍<code>Optional</code>类，以及如何用它消除代码中的<code>null</code>检查。</p>
+<h1 id="避免使用null检查">避免使用null检查</h1>
+<p>作为Java开发人员，几乎所有人都遇到过<code>NullPointerException</code>异常，大多数人遇到<code>NullPointerException</code>异常时都会在异常出现的地方加上<code>if</code>代码块来判断值不为空，比如下面的代码：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">bindUserToRole</span><span style="color:#f92672">(</span>User user<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>user <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        String roleId <span style="color:#f92672">=</span> user<span style="color:#f92672">.</span><span style="color:#a6e22e">getRoleId</span><span style="color:#f92672">();</span>
+        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>roleId <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            Role role <span style="color:#f92672">=</span> roleDao<span style="color:#f92672">.</span><span style="color:#a6e22e">findOne</span><span style="color:#f92672">(</span>roleId<span style="color:#f92672">);</span>
+            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>role <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+                role<span style="color:#f92672">.</span><span style="color:#a6e22e">setUserId</span><span style="color:#f92672">(</span>user<span style="color:#f92672">.</span><span style="color:#a6e22e">getUserId</span><span style="color:#f92672">());</span>
+                roleDao<span style="color:#f92672">.</span><span style="color:#a6e22e">save</span><span style="color:#f92672">(</span>role<span style="color:#f92672">);</span>
+            <span style="color:#f92672">}</span>
+        <span style="color:#f92672">}</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>这是比较普遍的做法，为了避免出现<code>NullPointerException</code>异常，手动对可能为<code>null</code>值进行了处理，不过代码看起来非常糟糕，业务逻辑被淹没在<code>if</code>逻辑判断中，也许下面的代码看起来可读性稍好一些：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">bindUserToRole</span><span style="color:#f92672">(</span>User user<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>user <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    String roleId <span style="color:#f92672">=</span> user<span style="color:#f92672">.</span><span style="color:#a6e22e">getRoleId</span><span style="color:#f92672">();</span>
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>roleId <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    Role <span style="color:#f92672">=</span> roleDao<span style="color:#f92672">.</span><span style="color:#a6e22e">findOne</span><span style="color:#f92672">(</span>roleId<span style="color:#f92672">);</span>
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>role <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        role<span style="color:#f92672">.</span><span style="color:#a6e22e">setUserId</span><span style="color:#f92672">(</span>user<span style="color:#f92672">.</span><span style="color:#a6e22e">getUserId</span><span style="color:#f92672">());</span>
+        roleDao<span style="color:#f92672">.</span><span style="color:#a6e22e">save</span><span style="color:#f92672">(</span>role<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>上面的代码避免了深层的<code>if</code>语句嵌套，但本质上是一样的，方法内有三个不同的返回点，出错后调试也不容易，因为你不知道是那个值导致了<code>NullPointerException</code>异常。</p>
+<p>基于上面的原因，Java 8中引入了一个新的类<code>Optional</code>，用以避免使用<code>null</code>值引发的种种问题。</p>
+<h1 id="optional类">Optional类</h1>
+<p><code>java.util.Optional</code>类是一个封装了<code>Optional</code>值的容器对象，<code>Optional</code>值可以为<code>null</code>，如果值存在，调用<code>isPresent()</code>方法返回<code>true</code>，调用<code>get()</code>方法可以获取值。</p>
+<h2 id="创建optional对象">创建Optional对象</h2>
+<p><code>Optional</code>类提供类三个方法用于实例化一个<code>Optional</code>对象，它们分别为<code>empty()</code>、<code>of()</code>、<code>ofNullable()</code>，这三个方法都是静态方法，可以直接调用。</p>
+<hr>
+<p><code>empty()</code>方法用于创建一个没有值的<code>Optional</code>对象：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Optional<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> emptyOpt <span style="color:#f92672">=</span> Optional<span style="color:#f92672">.</span><span style="color:#a6e22e">empty</span><span style="color:#f92672">();</span>
+</code></pre></div><p><code>empty()</code>方法创建的对象没有值，如果对<code>emptyOpt</code>变量调用<code>isPresent()</code>方法会返回<code>false</code>，调用<code>get()</code>方法抛出<code>NullPointerException</code>异常。</p>
+<hr>
+<p><code>of()</code>方法使用一个非空的值创建<code>Optional</code>对象：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">String str <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Hello World&#34;</span><span style="color:#f92672">;</span>
+Optional<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> notNullOpt <span style="color:#f92672">=</span> Optional<span style="color:#f92672">.</span><span style="color:#a6e22e">of</span><span style="color:#f92672">(</span>str<span style="color:#f92672">);</span>
+</code></pre></div><hr>
+<p><code>ofNullable()</code>方法接收一个可以为<code>null</code>的值：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Optional<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> nullableOpt <span style="color:#f92672">=</span> Optional<span style="color:#f92672">.</span><span style="color:#a6e22e">ofNullable</span><span style="color:#f92672">(</span>str<span style="color:#f92672">);</span>
+</code></pre></div><p>如果<code>str</code>的值为<code>null</code>，得到的<code>nullableOpt</code>是一个没有值的<code>Optional</code>对象。</p>
+<h2 id="提取optional对象中的值">提取Optional对象中的值</h2>
+<p>如果我们要获取<code>User</code>对象中的<code>roleId</code>属性值，常见的方式是直接获取：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">String roleId <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
+<span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>user <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    roleId <span style="color:#f92672">=</span> user<span style="color:#f92672">.</span><span style="color:#a6e22e">getRoleId</span><span style="color:#f92672">();</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>使用<code>Optional</code>中提供的<code>map()</code>方法可以以更简单的方式实现：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Optional<span style="color:#f92672">&lt;</span>User<span style="color:#f92672">&gt;</span> userOpt <span style="color:#f92672">=</span> Optional<span style="color:#f92672">.</span><span style="color:#a6e22e">ofNullable</span><span style="color:#f92672">(</span>user<span style="color:#f92672">);</span>
+Optional<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> roleIdOpt <span style="color:#f92672">=</span> userOpt<span style="color:#f92672">.</span><span style="color:#a6e22e">map</span><span style="color:#f92672">(</span>User<span style="color:#f92672">::</span>getRoleId<span style="color:#f92672">);</span>
+</code></pre></div><h2 id="使用orelse方法获取值">使用orElse()方法获取值</h2>
+<p><code>Optional</code>类还包含其他方法用于获取值，这些方法分别为：</p>
+<ul>
+<li><code>orElse()</code>：如果有值就返回，否则返回一个给定的值作为默认值；</li>
+<li><code>orElseGet()</code>：与<code>orElse()</code>方法作用类似，区别在于生成默认值的方式不同。该方法接受一个<code>Supplier</code>函数式接口参数，用于生成默认值；</li>
+<li><code>orElseThrow()</code>：与前面介绍的<code>get()</code>方法类似，当值为<code>null</code>时调用这两个方法都会抛出<code>NullPointerException</code>异常，区别在于该方法可以指定抛出的异常类型。</li>
+</ul>
+<p>下面来看看这三个方法的具体用法：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">String str <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Hello World&#34;</span><span style="color:#f92672">;</span>
+Optional<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> strOpt <span style="color:#f92672">=</span> Optional<span style="color:#f92672">.</span><span style="color:#a6e22e">of</span><span style="color:#f92672">(</span>str<span style="color:#f92672">);</span>
+String orElseResult <span style="color:#f92672">=</span> strOpt<span style="color:#f92672">.</span><span style="color:#a6e22e">orElse</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Hello Shanghai&#34;</span><span style="color:#f92672">);</span>
+String orElseGet <span style="color:#f92672">=</span> strOpt<span style="color:#f92672">.</span><span style="color:#a6e22e">orElseGet</span><span style="color:#f92672">(()</span> <span style="color:#f92672">-&gt;</span> <span style="color:#e6db74">&#34;Hello Shanghai&#34;</span><span style="color:#f92672">);</span>
+String orElseThrow <span style="color:#f92672">=</span> strOpt<span style="color:#f92672">.</span><span style="color:#a6e22e">orElseThrow</span><span style="color:#f92672">(</span>
+        <span style="color:#f92672">()</span> <span style="color:#f92672">-&gt;</span> <span style="color:#66d9ef">new</span> IllegalArgumentException<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Argument &#39;str&#39; cannot be null or blank.&#34;</span><span style="color:#f92672">));</span>
+</code></pre></div><p>此外，<code>Optional</code>类还提供了一个<code>ifPresent()</code>方法，该方法接收一个<code>Consumer</code>函数式接口，一般用于将信息打印到控制台：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Optional<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> strOpt <span style="color:#f92672">=</span> Optional<span style="color:#f92672">.</span><span style="color:#a6e22e">of</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Hello World&#34;</span><span style="color:#f92672">);</span>
+strOpt<span style="color:#f92672">.</span><span style="color:#a6e22e">ifPresent</span><span style="color:#f92672">(</span>System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">::</span>println<span style="color:#f92672">);</span>
+</code></pre></div><h2 id="使用filter方法过滤">使用filter()方法过滤</h2>
+<p><code>filter()</code>方法可用于判断<code>Optional</code>对象是否满足给定条件，一般用于条件过滤：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Optional<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> optional <span style="color:#f92672">=</span> Optional<span style="color:#f92672">.</span><span style="color:#a6e22e">of</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;lw900925@163.com&#34;</span><span style="color:#f92672">);</span>
+optional <span style="color:#f92672">=</span> optional<span style="color:#f92672">.</span><span style="color:#a6e22e">filter</span><span style="color:#f92672">(</span>str <span style="color:#f92672">-&gt;</span> str<span style="color:#f92672">.</span><span style="color:#a6e22e">contains</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;164&#34;</span><span style="color:#f92672">));</span>
+</code></pre></div><p>在上面的代码中，如果<code>filter()</code>方法中的Lambda表达式成立，<code>filter()</code>方法会返回当前<code>Optional</code>对象值，否则，返回一个值为空的<code>Optional</code>对象。</p>
+<h1 id="如何正确使用optional">如何正确使用Optional</h1>
+<p>通过上面的例子可以看出，<code>Optional</code>类可以优雅的避免<code>NullPointerException</code>带来的各种问题，不过，你是否真正掌握了<code>Optional</code>的用法？假设你试图使用<code>Optional</code>来避免可能出现的<code>NullPointerException</code>异常，编写了如下代码：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Optional<span style="color:#f92672">&lt;</span>User<span style="color:#f92672">&gt;</span> userOpt <span style="color:#f92672">=</span> Optional<span style="color:#f92672">.</span><span style="color:#a6e22e">ofNullable</span><span style="color:#f92672">(</span>user<span style="color:#f92672">);</span>
+<span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>userOpt<span style="color:#f92672">.</span><span style="color:#a6e22e">isPresent</span><span style="color:#f92672">())</span> <span style="color:#f92672">{</span>
+    User user <span style="color:#f92672">=</span> userOpt<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">();</span>
+    <span style="color:#75715e">// do something...
+</span><span style="color:#75715e"></span><span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#f92672">{</span>
+    <span style="color:#75715e">// do something...
+</span><span style="color:#75715e"></span><span style="color:#f92672">}</span>
+</code></pre></div><p>坦白说，上面的代码与我们之前的使用<code>if</code>语句判断空值没有任何区别，没有起到<code>Optional</code>的正真作用：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>user <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    <span style="color:#75715e">// do something...
+</span><span style="color:#75715e"></span><span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#f92672">{</span>
+    <span style="color:#75715e">// do something...
+</span><span style="color:#75715e"></span><span style="color:#f92672">}</span>
+</code></pre></div><p>当我们从之前版本切换到Java 8的时候，不应该还按照之前的思维方式处理<code>null</code>值，Java 8提倡函数式编程，新增的许多API都可以用函数式编程表示，<code>Optional</code>类也是其中之一。这里有几条关于<code>Optional</code>使用的建议：</p>
+<ol>
+<li>尽量避免在程序中直接调用<code>Optional</code>对象的<code>get()</code>和<code>isPresent()</code>方法；</li>
+<li>避免使用<code>Optional</code>类型声明实体类的属性；</li>
+</ol>
+<p>第一条建议中直接调用<code>get()</code>方法是很危险的做法，如果<code>Optional</code>的值为空，那么毫无疑问会抛出<code>NullPointerException</code>异常，而为了调用<code>get()</code>方法而使用<code>isPresent()</code>方法作为空值检查，这种做法与传统的用<code>if</code>语句块做空值检查没有任何区别。</p>
+<p>第二条建议避免使用<code>Optional</code>作为实体类的属性，它在设计的时候就没有考虑过用来作为类的属性，如果你查看<code>Optional</code>的源代码，你会发现它没有实现<code>java.io.Serializable</code>接口，这在某些情况下是很重要的（比如你的项目中使用了某些序列化框架），使用了<code>Optional</code>作为实体类的属性，意味着他们不能被序列化。</p>
+<p>下面我们通过一些例子讲解<code>Optional</code>的正确用法：</p>
+<h2 id="正确创建optional对象">正确创建Optional对象</h2>
+<p>上面提到创建<code>Optional</code>对象有三个方法，<code>empty()</code>方法比较简单，没什么特别要说明的。主要是<code>of()</code>和<code>ofNullable()</code>方法。当你很确定一个对象不可能为<code>null</code>的时候，应该使用<code>of()</code>方法，否则，尽可能使用<code>ofNullable()</code>方法，比如：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">method</span><span style="color:#f92672">(</span>Role role<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    <span style="color:#75715e">// 当Optional的值通过常量获得或者通过关键字new初始化，可以直接使用of()方法
+</span><span style="color:#75715e"></span>    Optional<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> strOpt <span style="color:#f92672">=</span> Optional<span style="color:#f92672">.</span><span style="color:#a6e22e">of</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Hello World&#34;</span><span style="color:#f92672">);</span>
+    Optional<span style="color:#f92672">&lt;</span>User<span style="color:#f92672">&gt;</span> userOpt <span style="color:#f92672">=</span> Optional<span style="color:#f92672">.</span><span style="color:#a6e22e">of</span><span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> User<span style="color:#f92672">());</span>
+
+    <span style="color:#75715e">// 方法参数中role值不确定是否为null，使用ofNullable()方法创建
+</span><span style="color:#75715e"></span>    Optional<span style="color:#f92672">&lt;</span>Role<span style="color:#f92672">&gt;</span> roleOpt <span style="color:#f92672">=</span> Optional<span style="color:#f92672">.</span><span style="color:#a6e22e">ofNullable</span><span style="color:#f92672">(</span>role<span style="color:#f92672">);</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><h2 id="orelse方法的使用">orElse()方法的使用</h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">return</span> str <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span> <span style="color:#f92672">?</span> str <span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;Hello World&#34;</span>
+</code></pre></div><p>上面的代码表示判断字符串<code>str</code>是否为空，不为空就返回，否则，返回一个常量。使用<code>Optional</code>类可以表示为：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">return</span> strOpt<span style="color:#f92672">.</span><span style="color:#a6e22e">orElse</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Hello World&#34;</span><span style="color:#f92672">)</span>
+</code></pre></div><h2 id="简化if-else">简化if-else</h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">User user <span style="color:#f92672">=</span> <span style="color:#f92672">...</span>
+<span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>user <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    String userName <span style="color:#f92672">=</span> user<span style="color:#f92672">.</span><span style="color:#a6e22e">getUserName</span><span style="color:#f92672">();</span>
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>userName <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> userName<span style="color:#f92672">.</span><span style="color:#a6e22e">toUpperCase</span><span style="color:#f92672">();</span>
+    <span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>上面的代码可以简化成：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">User user <span style="color:#f92672">=</span> <span style="color:#f92672">...</span>
+Optional<span style="color:#f92672">&lt;</span>User<span style="color:#f92672">&gt;</span> userOpt <span style="color:#f92672">=</span> Optional<span style="color:#f92672">.</span><span style="color:#a6e22e">ofNullable</span><span style="color:#f92672">(</span>user<span style="color:#f92672">);</span>
+
+<span style="color:#66d9ef">return</span> userOpt<span style="color:#f92672">.</span><span style="color:#a6e22e">map</span><span style="color:#f92672">(</span>User<span style="color:#f92672">::</span>getUserName<span style="color:#f92672">)</span>
+            <span style="color:#f92672">.</span><span style="color:#a6e22e">map</span><span style="color:#f92672">(</span>String<span style="color:#f92672">::</span>toUpperCase<span style="color:#f92672">)</span>
+            <span style="color:#f92672">.</span><span style="color:#a6e22e">orElse</span><span style="color:#f92672">(</span><span style="color:#66d9ef">null</span><span style="color:#f92672">);</span>
+</code></pre></div><p>总结一下，新的<code>Optional</code>类让我们可以以函数式编程的方式处理<code>null</code>值，抛弃了Java 8之前需要嵌套大量<code>if-else</code>代码块，使代码可读性有了很大的提高。</p>
+</div>
+        <div class="post_footer">
+          
+          <div class="meta">
+            <div class="info">
+              <span class="field tags">
+                <i class="remixicon-stack-line"></i>
+                
+                <a href="https://ffppss.github.io/tags/java/">java</a>
+                
+                <a href="https://ffppss.github.io/tags/optional/">Optional</a>
+                
+                <a href="https://ffppss.github.io/tags/%E6%96%B0%E7%89%B9%E6%80%A7/">新特性</a>
+                
+              </span>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+      
+      
+    </div>
+  </div>
+  <a id="back_to_top" href="#" class="back_to_top"><span>△</span></a>
+</div>
+
+<footer class="footer">
+  <div class="powered_by" style="color: #cccccc;">
+    Proudly published with <a href="http://www.gohugo.io/">Hugo&nbsp;&nbsp;</a>
+    Theme <a href="https://github.com/imzeuk/hugo-theme-zozo themes/zozo">zozo</a>
+  </div>
+
+  
+</footer>
+
+
+
+<script src="https://ffppss.github.io/js/jquery-3.3.1.min.js"></script>
+<script src="https://ffppss.github.io/js/zozo.js"></script>
+<script src="https://ffppss.github.io/js/highlight.pack.js"></script>
+<link  href="https://ffppss.github.io/css/fancybox.min.css" rel="stylesheet">
+<script src="https://ffppss.github.io/js/fancybox.min.js"></script>
+
+<script>hljs.initHighlightingOnLoad()</script>
+
+
+  <script type="text/javascript" async src="https://cdn.bootcss.com/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[\[','\]\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+
+MathJax.Hub.Queue(function() {
+    
+    
+    
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<style>
+code.has-jax {
+    font: inherit;
+    font-size: 100%;
+    background: inherit;
+    border: inherit;
+    color: #515151;
+}
+</style>
+
+
+
+
+
+
+</body>
+</html>

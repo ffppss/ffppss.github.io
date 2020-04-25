@@ -1,0 +1,34 @@
+.text_center {
+    text-align: center;
+}
+
+.my_field {
+    position: absolute;
+    right: 15px;
+}
+
+.pagination li {
+    display: inline-block;
+}
+
+.pagination .active a {
+    background-color: #222;
+    border-color: #222;
+    color: #fff;
+    cursor: default;
+    z-index: 2;
+}
+.pagination li a {
+    background-color: #fff;
+    margin-left: .1em;
+    margin-right: .1em;
+    border: 1px solid #222;
+    color: #222;
+    float: left;
+    line-height: 1.42857143;
+    padding: 6px 12px;
+    position: relative;
+    text-decoration: none;
+    margin-bottom: .2em;
+    border-radius: 5px;
+}

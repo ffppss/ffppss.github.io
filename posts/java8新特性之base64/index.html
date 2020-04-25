@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="zh-cn" >
+<head>
+  <meta charset="utf-8"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+  
+  <meta name="author"
+        content="Zeuk"/>
+
+  
+  <meta name="description" content="在Java 8中，Base64编码已经成为Java类库的标准，Java 8 内置了 Base64 编码的编码器和解码器。 Base64工具类提供了一套静态方法获取下面三种BASE64编解码器： **基本：**输出被映射到一组"/>
+  
+
+  
+  
+  <meta name="keywords" content="Hugo, theme, zozo"/>
+  
+
+  
+  <link rel="canonical" href="https://ffppss.github.io/posts/java8%E6%96%B0%E7%89%B9%E6%80%A7%E4%B9%8Bbase64/"/>
+
+  
+
+  <title>Java 8新特性：Base64 &middot; 无尽光芒</title>
+
+  <link rel="shortcut icon" href="https://ffppss.github.io/images/favicon.ico"/>
+  <link rel="stylesheet" href="https://ffppss.github.io/css/animate.min.css"/>
+  <link rel="stylesheet" href="https://ffppss.github.io/css/remixicon.css"/>
+  <link rel="stylesheet" href="https://ffppss.github.io/css/zozo.css"/>
+  <link rel="stylesheet" href="https://ffppss.github.io/css/highlight.css"/>
+  <link rel="stylesheet" href="https://ffppss.github.io/css/custom.css"/>
+
+  
+  
+
+  <script>
+    (function(d) {
+      var config = {
+        kitId: 'kfn1kkp',
+        scriptTimeout: 3000,
+        async: true
+      },
+      h=d.documentElement,t=setTimeout(function(){h.className=h.className.replace(/\bwf-loading\b/g,"")+" wf-inactive";},config.scriptTimeout),tk=d.createElement("script"),f=false,s=d.getElementsByTagName("script")[0],a;h.className+=" wf-loading";tk.src='https://use.typekit.net/'+config.kitId+'.js';tk.async=true;tk.onload=tk.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete"&&a!="loaded")return;f=true;clearTimeout(t);try{Typekit.load(config)}catch(e){}};s.parentNode.insertBefore(tk,s)
+    })(document);
+  </script>
+</head>
+
+<body>
+<div class="main animated">
+  <div class="nav_container animated fadeInDown">
+  <div class="site_nav" id="site_nav">
+    <ul>
+      
+      <li>
+        <a href="/">首页</a>
+      </li>
+      
+      <li>
+        <a href="/posts/">归档</a>
+      </li>
+      
+      <li>
+        <a href="/tags/">标签</a>
+      </li>
+      
+      <li>
+        <a href="/about/">关于</a>
+      </li>
+      
+    </ul>
+  </div>
+  <div class="menu_icon">
+    <a id="menu_icon"><i class="remixicon-links-line"></i></a>
+  </div>
+</div>
+
+  <div class="header animated fadeInDown">
+  <div class="site_title_container">
+    <div class="site_title">
+      <h1>
+        <a href="https://ffppss.github.io">
+          <span>无尽光芒</span>
+          <img src="https://ffppss.github.io/images/logo.svg"/>
+        </a>
+      </h1>
+    </div>
+    <div class="description">
+      <p class="sub_title">老冯的杂货铺</p>
+      <div class="text_center">
+        <img src="https://ffppss.github.io/images/ball.png" style="width:64px;height:64px;"/>
+      </div>
+      <div class="my_socials">
+        
+        
+        <script>
+        </script>
+        <a href="%20" title="github" target="_blank"><i class="remixicon-github-fill"></i></a>
+        
+        
+        
+        <script>
+        </script>
+        <a href="%20" title="mail" target="_blank"><i class="remixicon-mail-fill"></i></a>
+        
+        
+        
+        <script>
+        </script>
+        <a href="%20" title="qq" target="_blank"><i class="remixicon-qq-fill"></i></a>
+        
+        
+        
+        <script>
+        </script>
+        <a href="%20" title="wechat" target="_blank"><i class="remixicon-wechat-fill"></i></a>
+        
+        
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+  <div class="content">
+    <div class="post_page">
+      <div class="post animated fadeInDown">
+        <div class="post_title post_detail_title">
+          <h2><a href='/posts/java8%E6%96%B0%E7%89%B9%E6%80%A7%E4%B9%8Bbase64/'>Java 8新特性：Base64</a></h2>
+          <span class="date">2020.04.24</span>
+        </div>
+        <div class="post_content markdown"><p>在Java 8中，Base64编码已经成为Java类库的标准，Java 8 内置了 Base64 编码的编码器和解码器。</p>
+<p>Base64工具类提供了一套静态方法获取下面三种BASE64编解码器：</p>
+<ul>
+<li>**基本：**输出被映射到一组字符A-Za-z0-9+/，编码不添加任何行标，输出的解码仅支持A-Za-z0-9+/。</li>
+<li>**URL：**输出映射到一组字符A-Za-z0-9+_，输出是URL和文件。</li>
+<li>**MIME：**输出隐射到MIME友好格式。输出每行不超过76字符，并且使用&rsquo;\r'并跟随&rsquo;\n'作为分割。编码输出最后没有行分割。</li>
+</ul>
+<h3 id="内嵌类">内嵌类</h3>
+<table>
+<thead>
+<tr>
+<th align="left">序号</th>
+<th align="left">内嵌类 &amp; 描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">1</td>
+<td align="left"><strong>static class Base64.Decoder</strong>该类实现一个解码器用于，使用 Base64 编码来解码字节数据。</td>
+</tr>
+<tr>
+<td align="left">2</td>
+<td align="left"><strong>static class Base64.Encoder</strong>该类实现一个编码器，使用 Base64 编码来编码字节数据。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="方法">方法</h3>
+<table>
+<thead>
+<tr>
+<th align="left">序号</th>
+<th align="left">方法名 &amp; 描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">1</td>
+<td align="left">**static Base64.Decoder getDecoder()**返回一个 Base64.Decoder ，解码使用基本型 base64 编码方案。</td>
+</tr>
+<tr>
+<td align="left">2</td>
+<td align="left">**static Base64.Encoder getEncoder()**返回一个 Base64.Encoder ，编码使用基本型 base64 编码方案。</td>
+</tr>
+<tr>
+<td align="left">3</td>
+<td align="left">**static Base64.Decoder getMimeDecoder()**返回一个 Base64.Decoder ，解码使用 MIME 型 base64 编码方案。</td>
+</tr>
+<tr>
+<td align="left">4</td>
+<td align="left">**static Base64.Encoder getMimeEncoder()**返回一个 Base64.Encoder ，编码使用 MIME 型 base64 编码方案。</td>
+</tr>
+<tr>
+<td align="left">5</td>
+<td align="left">**static Base64.Encoder getMimeEncoder(int lineLength, byte[] lineSeparator)**返回一个 Base64.Encoder ，编码使用 MIME 型 base64 编码方案，可以通过参数指定每行的长度及行的分隔符。</td>
+</tr>
+<tr>
+<td align="left">6</td>
+<td align="left">**static Base64.Decoder getUrlDecoder()**返回一个 Base64.Decoder ，解码使用 URL 和文件名安全型 base64 编码方案。</td>
+</tr>
+<tr>
+<td align="left">7</td>
+<td align="left">**static Base64.Encoder getUrlEncoder()**返回一个 Base64.Encoder ，编码使用 URL 和文件名安全型 base64 编码方案。</td>
+</tr>
+</tbody>
+</table>
+<p>**注意：**Base64 类的很多方法从 <strong>java.lang.Object</strong> 类继承。</p>
+<hr>
+<h2 id="base64-实例">Base64 实例</h2>
+<p>以下实例演示了 Base64 的使用:</p>
+<h2 id="java8testerjava-文件">Java8Tester.java 文件</h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">import</span> java.util.Base64<span style="color:#f92672">;</span>
+<span style="color:#f92672">import</span> java.util.UUID<span style="color:#f92672">;</span>
+<span style="color:#f92672">import</span> java.io.UnsupportedEncodingException<span style="color:#f92672">;</span>
+ 
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Java8Tester</span> <span style="color:#f92672">{</span>
+   <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">){</span>
+
+        <span style="color:#75715e">// 使用基本编码
+</span><span style="color:#75715e"></span>        String base64encodedString <span style="color:#f92672">=</span> Base64<span style="color:#f92672">.</span><span style="color:#a6e22e">getEncoder</span><span style="color:#f92672">().</span><span style="color:#a6e22e">encodeToString</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;java8&#34;</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getBytes</span><span style="color:#f92672">(</span>StandardCharsets<span style="color:#f92672">.</span><span style="color:#a6e22e">UTF_8</span><span style="color:#f92672">));</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Base64 编码字符串 (基本) :&#34;</span> <span style="color:#f92672">+</span> base64encodedString<span style="color:#f92672">);</span>
+
+        <span style="color:#75715e">// 解码
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">byte</span><span style="color:#f92672">[]</span> base64decodedBytes <span style="color:#f92672">=</span> Base64<span style="color:#f92672">.</span><span style="color:#a6e22e">getDecoder</span><span style="color:#f92672">().</span><span style="color:#a6e22e">decode</span><span style="color:#f92672">(</span>base64encodedString<span style="color:#f92672">);</span>
+
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;原始字符串: &#34;</span> <span style="color:#f92672">+</span> <span style="color:#66d9ef">new</span> String<span style="color:#f92672">(</span>base64decodedBytes<span style="color:#f92672">,</span> StandardCharsets<span style="color:#f92672">.</span><span style="color:#a6e22e">UTF_8</span><span style="color:#f92672">));</span>
+        base64encodedString <span style="color:#f92672">=</span> Base64<span style="color:#f92672">.</span><span style="color:#a6e22e">getUrlEncoder</span><span style="color:#f92672">().</span><span style="color:#a6e22e">encodeToString</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;runoob?java8&#34;</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getBytes</span><span style="color:#f92672">(</span>StandardCharsets<span style="color:#f92672">.</span><span style="color:#a6e22e">UTF_8</span><span style="color:#f92672">));</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Base64 编码字符串 (URL) :&#34;</span> <span style="color:#f92672">+</span> base64encodedString<span style="color:#f92672">);</span>
+
+        StringBuilder stringBuilder <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> StringBuilder<span style="color:#f92672">();</span>
+
+        <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> 0<span style="color:#f92672">;</span> i <span style="color:#f92672">&lt;</span> 10<span style="color:#f92672">;</span> <span style="color:#f92672">++</span>i<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            stringBuilder<span style="color:#f92672">.</span><span style="color:#a6e22e">append</span><span style="color:#f92672">(</span>UUID<span style="color:#f92672">.</span><span style="color:#a6e22e">randomUUID</span><span style="color:#f92672">().</span><span style="color:#a6e22e">toString</span><span style="color:#f92672">());</span>
+        <span style="color:#f92672">}</span>
+
+        <span style="color:#66d9ef">byte</span><span style="color:#f92672">[]</span> mimeBytes <span style="color:#f92672">=</span> stringBuilder<span style="color:#f92672">.</span><span style="color:#a6e22e">toString</span><span style="color:#f92672">().</span><span style="color:#a6e22e">getBytes</span><span style="color:#f92672">(</span>StandardCharsets<span style="color:#f92672">.</span><span style="color:#a6e22e">UTF_8</span><span style="color:#f92672">);</span>
+        String mimeEncodedString <span style="color:#f92672">=</span> Base64<span style="color:#f92672">.</span><span style="color:#a6e22e">getMimeEncoder</span><span style="color:#f92672">().</span><span style="color:#a6e22e">encodeToString</span><span style="color:#f92672">(</span>mimeBytes<span style="color:#f92672">);</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Base64 编码字符串 (MIME) :&#34;</span> <span style="color:#f92672">+</span> mimeEncodedString<span style="color:#f92672">);</span>
+
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>执行以上脚本，输出结果为：</p>
+<pre><code>Base64 编码字符串 (基本) :amF2YTg=
+原始字符串: java8
+Base64 编码字符串 (URL) :cnVub29iP2phdmE4
+Base64 编码字符串 (MIME) :ZGRmMDE2M2EtNTMxYy00YjE4LWE1MzktMjQ5NDA2ZGU5ZmJmNzVjNzI3NzgtNGIwZS00ZGFkLWI4
+YmMtZDk1NTg0NzRlOGI4NGQ4YTg2ZmEtMWZkMi00NTAzLWFjY2ItNjk5NmUxNmFkM2U0NGNiZDkx
+NGItNThiZS00NTUxLWJkOTMtYjJmYTcwODNiYzVjOWJmYTE4YWUtY2I4YS00ZWMzLThjNmMtYjg1
+OWE2MWQ5NDE4MGQwZjAyOGYtM2FlZi00MGRiLTlkNzUtNWEzYTY0Y2E3MWQzNjEzMmQ4MzctOTUy
+Zi00OTI0LWJkOGQtY2EzODU3MGM2NzlmZTEyYjBkN2UtYzk5MC00ZmRkLWI4ZWEtNzYxMWNlYzg2
+N2IzZmMwM2Y4NjItNzBiNS00NTNkLWJkMjUtZWVkODJiMDM4NGIxYTAyMmFmMjktMzk2ZC00MjA1
+LWIwOGEtOGY4MWJlY2Y0Nzlk
+</code></pre></div>
+        <div class="post_footer">
+          
+          <div class="meta">
+            <div class="info">
+              <span class="field tags">
+                <i class="remixicon-stack-line"></i>
+                
+                <a href="https://ffppss.github.io/tags/java/">java</a>
+                
+                <a href="https://ffppss.github.io/tags/base64/">Base64</a>
+                
+                <a href="https://ffppss.github.io/tags/%E6%96%B0%E7%89%B9%E6%80%A7/">新特性</a>
+                
+              </span>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+      
+      
+    </div>
+  </div>
+  <a id="back_to_top" href="#" class="back_to_top"><span>△</span></a>
+</div>
+
+<footer class="footer">
+  <div class="powered_by" style="color: #cccccc;">
+    Proudly published with <a href="http://www.gohugo.io/">Hugo&nbsp;&nbsp;</a>
+    Theme <a href="https://github.com/imzeuk/hugo-theme-zozo themes/zozo">zozo</a>
+  </div>
+
+  
+</footer>
+
+
+
+<script src="https://ffppss.github.io/js/jquery-3.3.1.min.js"></script>
+<script src="https://ffppss.github.io/js/zozo.js"></script>
+<script src="https://ffppss.github.io/js/highlight.pack.js"></script>
+<link  href="https://ffppss.github.io/css/fancybox.min.css" rel="stylesheet">
+<script src="https://ffppss.github.io/js/fancybox.min.js"></script>
+
+<script>hljs.initHighlightingOnLoad()</script>
+
+
+  <script type="text/javascript" async src="https://cdn.bootcss.com/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[\[','\]\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+
+MathJax.Hub.Queue(function() {
+    
+    
+    
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<style>
+code.has-jax {
+    font: inherit;
+    font-size: 100%;
+    background: inherit;
+    border: inherit;
+    color: #515151;
+}
+</style>
+
+
+
+
+
+
+</body>
+</html>

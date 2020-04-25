@@ -1,24 +1,15 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Posts on 无尽光芒</title>
-    <link>https://ffppss.github.io/posts/</link>
-    <description>Recent content in Posts on 无尽光芒</description>
+    <title>java on 无尽光芒</title>
+    <link>https://ffppss.github.io/tags/java/</link>
+    <description>Recent content in java on 无尽光芒</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Fri, 24 Apr 2020 23:49:40 +0800</lastBuildDate>
+    <lastBuildDate>Fri, 24 Apr 2020 17:49:40 +0800</lastBuildDate>
     
-	<atom:link href="https://ffppss.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://ffppss.github.io/tags/java/index.xml" rel="self" type="application/rss+xml" />
     
-    
-    <item>
-      <title>测试样式</title>
-      <link>https://ffppss.github.io/posts/collections-%E5%B7%A5%E5%85%B7%E7%B1%BB%E5%92%8C-arrays-%E5%B7%A5%E5%85%B7%E7%B1%BB%E5%B8%B8%E8%A7%81%E6%96%B9%E6%B3%95/</link>
-      <pubDate>Fri, 24 Apr 2020 23:49:40 +0800</pubDate>
-      
-      <guid>https://ffppss.github.io/posts/collections-%E5%B7%A5%E5%85%B7%E7%B1%BB%E5%92%8C-arrays-%E5%B7%A5%E5%85%B7%E7%B1%BB%E5%B8%B8%E8%A7%81%E6%96%B9%E6%B3%95/</guid>
-      <description>Collections Collections 工具类常用方法: 排序 查找,替换操作 同步控制(不推荐，需要线程安全的集合类型时请考虑使用 JUC 包下的并发集合) 排序操作 void reverse(List list)//反转 void shuffle(List list)//随机排序 void sort(List list)//按自然排序的升序排</description>
-    </item>
     
     <item>
       <title>Java 8新特性：Base64</title>

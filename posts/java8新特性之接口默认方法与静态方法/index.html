@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="zh-cn" >
+<head>
+  <meta charset="utf-8"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+  
+  <meta name="author"
+        content="Zeuk"/>
+
+  
+  <meta name="description" content="有这样一些场景，如果一个接口要添加一个方法，那所有的接口实现类都要去实现，而某些实现类根本就不需要实现这个方法也要写一个空实现，所以接口默认方法就是为了解决这个问题。 接口静态方法类似于默认方法，但是我"/>
+  
+
+  
+  
+  <meta name="keywords" content="Hugo, theme, zozo"/>
+  
+
+  
+  <link rel="canonical" href="https://ffppss.github.io/posts/java8%E6%96%B0%E7%89%B9%E6%80%A7%E4%B9%8B%E6%8E%A5%E5%8F%A3%E9%BB%98%E8%AE%A4%E6%96%B9%E6%B3%95%E4%B8%8E%E9%9D%99%E6%80%81%E6%96%B9%E6%B3%95/"/>
+
+  
+
+  <title>Java 8新特性：接口默认方法与静态方法 &middot; 无尽光芒</title>
+
+  <link rel="shortcut icon" href="https://ffppss.github.io/images/favicon.ico"/>
+  <link rel="stylesheet" href="https://ffppss.github.io/css/animate.min.css"/>
+  <link rel="stylesheet" href="https://ffppss.github.io/css/remixicon.css"/>
+  <link rel="stylesheet" href="https://ffppss.github.io/css/zozo.css"/>
+  <link rel="stylesheet" href="https://ffppss.github.io/css/highlight.css"/>
+  <link rel="stylesheet" href="https://ffppss.github.io/css/custom.css"/>
+
+  
+  
+
+  <script>
+    (function(d) {
+      var config = {
+        kitId: 'kfn1kkp',
+        scriptTimeout: 3000,
+        async: true
+      },
+      h=d.documentElement,t=setTimeout(function(){h.className=h.className.replace(/\bwf-loading\b/g,"")+" wf-inactive";},config.scriptTimeout),tk=d.createElement("script"),f=false,s=d.getElementsByTagName("script")[0],a;h.className+=" wf-loading";tk.src='https://use.typekit.net/'+config.kitId+'.js';tk.async=true;tk.onload=tk.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete"&&a!="loaded")return;f=true;clearTimeout(t);try{Typekit.load(config)}catch(e){}};s.parentNode.insertBefore(tk,s)
+    })(document);
+  </script>
+</head>
+
+<body>
+<div class="main animated">
+  <div class="nav_container animated fadeInDown">
+  <div class="site_nav" id="site_nav">
+    <ul>
+      
+      <li>
+        <a href="/">首页</a>
+      </li>
+      
+      <li>
+        <a href="/posts/">归档</a>
+      </li>
+      
+      <li>
+        <a href="/tags/">标签</a>
+      </li>
+      
+      <li>
+        <a href="/about/">关于</a>
+      </li>
+      
+    </ul>
+  </div>
+  <div class="menu_icon">
+    <a id="menu_icon"><i class="remixicon-links-line"></i></a>
+  </div>
+</div>
+
+  <div class="header animated fadeInDown">
+  <div class="site_title_container">
+    <div class="site_title">
+      <h1>
+        <a href="https://ffppss.github.io">
+          <span>无尽光芒</span>
+          <img src="https://ffppss.github.io/images/logo.svg"/>
+        </a>
+      </h1>
+    </div>
+    <div class="description">
+      <p class="sub_title">老冯的杂货铺</p>
+      <div class="text_center">
+        <img src="https://ffppss.github.io/images/ball.png" style="width:64px;height:64px;"/>
+      </div>
+      <div class="my_socials">
+        
+        
+        <script>
+        </script>
+        <a href="%20" title="github" target="_blank"><i class="remixicon-github-fill"></i></a>
+        
+        
+        
+        <script>
+        </script>
+        <a href="%20" title="mail" target="_blank"><i class="remixicon-mail-fill"></i></a>
+        
+        
+        
+        <script>
+        </script>
+        <a href="%20" title="qq" target="_blank"><i class="remixicon-qq-fill"></i></a>
+        
+        
+        
+        <script>
+        </script>
+        <a href="%20" title="wechat" target="_blank"><i class="remixicon-wechat-fill"></i></a>
+        
+        
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+  <div class="content">
+    <div class="post_page">
+      <div class="post animated fadeInDown">
+        <div class="post_title post_detail_title">
+          <h2><a href='/posts/java8%E6%96%B0%E7%89%B9%E6%80%A7%E4%B9%8B%E6%8E%A5%E5%8F%A3%E9%BB%98%E8%AE%A4%E6%96%B9%E6%B3%95%E4%B8%8E%E9%9D%99%E6%80%81%E6%96%B9%E6%B3%95/'>Java 8新特性：接口默认方法与静态方法</a></h2>
+          <span class="date">2020.04.24</span>
+        </div>
+        <div class="post_content markdown"><p>有这样一些场景，如果一个接口要添加一个方法，那所有的接口实现类都要去实现，而某些实现类根本就不需要实现这个方法也要写一个空实现，所以接口默认方法就是为了解决这个问题。</p>
+<p>接口静态方法类似于默认方法，但是我们不能在实现类中覆盖它们，可以避免默认方法在实现类中被覆盖实现。</p>
+<p>JDK8的list.foreache方法，看下源码，其实也是java.lang.Iterable接口的默认方法。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">default</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">forEach</span><span style="color:#f92672">(</span>Consumer<span style="color:#f92672">&lt;?</span> <span style="color:#66d9ef">super</span> T<span style="color:#f92672">&gt;</span> action<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    Objects<span style="color:#f92672">.</span><span style="color:#a6e22e">requireNonNull</span><span style="color:#f92672">(</span>action<span style="color:#f92672">);</span>
+    <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span>T t <span style="color:#f92672">:</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        action<span style="color:#f92672">.</span><span style="color:#a6e22e">accept</span><span style="color:#f92672">(</span>t<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><h2 id="简单的例子">简单的例子</h2>
+<p>默认方法以<code>default</code>修饰，静态方法用<code>static</code>。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+	IUserInterface userInterface <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> UserServiceImpl<span style="color:#f92672">();</span>
+	System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>userInterface<span style="color:#f92672">.</span><span style="color:#a6e22e">getDefaultUser1</span><span style="color:#f92672">());</span>
+	System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>IUserInterface<span style="color:#f92672">.</span><span style="color:#a6e22e">getDefaultUser2</span><span style="color:#f92672">());</span>
+<span style="color:#f92672">}</span>
+
+<span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">IUserInterface</span> <span style="color:#f92672">{</span>
+
+    <span style="color:#66d9ef">default</span> User <span style="color:#a6e22e">getDefaultUser1</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> User<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Susan1&#34;</span><span style="color:#f92672">,</span> 11<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">static</span> User <span style="color:#a6e22e">getDefaultUser2</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> User<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Susan2&#34;</span><span style="color:#f92672">,</span> 22<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+
+<span style="color:#f92672">}</span>
+
+<span style="color:#66d9ef">static</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">UserServiceImpl</span> <span style="color:#66d9ef">implements</span> IUserInterface <span style="color:#f92672">{</span>
+	<span style="color:#75715e">//...省略
+</span><span style="color:#75715e"></span><span style="color:#f92672">}</span>
+</code></pre></div><h2 id="注意要点">注意要点</h2>
+<p>1、接口默认方法、静态方法可以有多个。</p>
+<p>2、默认方法通过实例调用，静态方法通过接口名调用。</p>
+<p>3、<code>default</code>默认方法关键字只能用在接口中。</p>
+<p>4、默认方法可以被继承，如果继承了多个接口，多个接口都定义了多个同样的默认方法，实现类需要重写默认方法不然会报错。</p>
+<p>5、静态方法不能被继承及覆盖，所以只被具体所在的接口调用。</p>
+</div>
+        <div class="post_footer">
+          
+          <div class="meta">
+            <div class="info">
+              <span class="field tags">
+                <i class="remixicon-stack-line"></i>
+                
+                <a href="https://ffppss.github.io/tags/java/">java</a>
+                
+                <a href="https://ffppss.github.io/tags/interface/">interface</a>
+                
+                <a href="https://ffppss.github.io/tags/%E6%96%B0%E7%89%B9%E6%80%A7/">新特性</a>
+                
+              </span>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+      
+      
+    </div>
+  </div>
+  <a id="back_to_top" href="#" class="back_to_top"><span>△</span></a>
+</div>
+
+<footer class="footer">
+  <div class="powered_by" style="color: #cccccc;">
+    Proudly published with <a href="http://www.gohugo.io/">Hugo&nbsp;&nbsp;</a>
+    Theme <a href="https://github.com/imzeuk/hugo-theme-zozo themes/zozo">zozo</a>
+  </div>
+
+  
+</footer>
+
+
+
+<script src="https://ffppss.github.io/js/jquery-3.3.1.min.js"></script>
+<script src="https://ffppss.github.io/js/zozo.js"></script>
+<script src="https://ffppss.github.io/js/highlight.pack.js"></script>
+<link  href="https://ffppss.github.io/css/fancybox.min.css" rel="stylesheet">
+<script src="https://ffppss.github.io/js/fancybox.min.js"></script>
+
+<script>hljs.initHighlightingOnLoad()</script>
+
+
+  <script type="text/javascript" async src="https://cdn.bootcss.com/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[\[','\]\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+
+MathJax.Hub.Queue(function() {
+    
+    
+    
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<style>
+code.has-jax {
+    font: inherit;
+    font-size: 100%;
+    background: inherit;
+    border: inherit;
+    color: #515151;
+}
+</style>
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>try on 无尽光芒</title>
+    <link>https://ffppss.github.io/tags/try/</link>
+    <description>Recent content in try on 无尽光芒</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Fri, 24 Apr 2020 17:49:40 +0800</lastBuildDate>
+    
+	<atom:link href="https://ffppss.github.io/tags/try/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Java try-with-resource 语法糖</title>
+      <link>https://ffppss.github.io/posts/try-with-resources/</link>
+      <pubDate>Fri, 24 Apr 2020 17:49:40 +0800</pubDate>
+      
+      <guid>https://ffppss.github.io/posts/try-with-resources/</guid>
+      <description>背景 众所周知，所有被打开的系统资源，比如流、文件或者Socket连接等，都需要被开发者手动关闭，否则随着程序的不断运行，资源泄露将会累积成重大的生产事故。 在Java的江湖中，存在着一种名为finall</description>
+    </item>
+    
+  </channel>
+</rss>

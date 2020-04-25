@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="zh-cn" >
+<head>
+  <meta charset="utf-8"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+  
+  <meta name="author"
+        content="Zeuk"/>
+
+  
+  <meta name="description" content="Collections Collections 工具类常用方法: 排序 查找,替换操作 同步控制(不推荐，需要线程安全的集合类型时请考虑使用 JUC 包下的并发集合) 排序操作 void reverse(List list)//反转 void shuffle(List list)//随机排序 void sort(List list)//按自然排序的升序排"/>
+  
+
+  
+  
+  <meta name="keywords" content="Hugo, theme, zozo"/>
+  
+
+  
+  <link rel="canonical" href="https://ffppss.github.io/posts/collections-%E5%B7%A5%E5%85%B7%E7%B1%BB%E5%92%8C-arrays-%E5%B7%A5%E5%85%B7%E7%B1%BB%E5%B8%B8%E8%A7%81%E6%96%B9%E6%B3%95/"/>
+
+  
+
+  <title>测试样式 &middot; 无尽光芒</title>
+
+  <link rel="shortcut icon" href="https://ffppss.github.io/images/favicon.ico"/>
+  <link rel="stylesheet" href="https://ffppss.github.io/css/animate.min.css"/>
+  <link rel="stylesheet" href="https://ffppss.github.io/css/remixicon.css"/>
+  <link rel="stylesheet" href="https://ffppss.github.io/css/zozo.css"/>
+  <link rel="stylesheet" href="https://ffppss.github.io/css/highlight.css"/>
+  <link rel="stylesheet" href="https://ffppss.github.io/css/custom.css"/>
+
+  
+  
+
+  <script>
+    (function(d) {
+      var config = {
+        kitId: 'kfn1kkp',
+        scriptTimeout: 3000,
+        async: true
+      },
+      h=d.documentElement,t=setTimeout(function(){h.className=h.className.replace(/\bwf-loading\b/g,"")+" wf-inactive";},config.scriptTimeout),tk=d.createElement("script"),f=false,s=d.getElementsByTagName("script")[0],a;h.className+=" wf-loading";tk.src='https://use.typekit.net/'+config.kitId+'.js';tk.async=true;tk.onload=tk.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete"&&a!="loaded")return;f=true;clearTimeout(t);try{Typekit.load(config)}catch(e){}};s.parentNode.insertBefore(tk,s)
+    })(document);
+  </script>
+</head>
+
+<body>
+<div class="main animated">
+  <div class="nav_container animated fadeInDown">
+  <div class="site_nav" id="site_nav">
+    <ul>
+      
+      <li>
+        <a href="/">首页</a>
+      </li>
+      
+      <li>
+        <a href="/posts/">归档</a>
+      </li>
+      
+      <li>
+        <a href="/tags/">标签</a>
+      </li>
+      
+      <li>
+        <a href="/about/">关于</a>
+      </li>
+      
+    </ul>
+  </div>
+  <div class="menu_icon">
+    <a id="menu_icon"><i class="remixicon-links-line"></i></a>
+  </div>
+</div>
+
+  <div class="header animated fadeInDown">
+  <div class="site_title_container">
+    <div class="site_title">
+      <h1>
+        <a href="https://ffppss.github.io">
+          <span>无尽光芒</span>
+          <img src="https://ffppss.github.io/images/logo.svg"/>
+        </a>
+      </h1>
+    </div>
+    <div class="description">
+      <p class="sub_title">老冯的杂货铺</p>
+      <div class="text_center">
+        <img src="https://ffppss.github.io/images/ball.png" style="width:64px;height:64px;"/>
+      </div>
+      <div class="my_socials">
+        
+        
+        <script>
+        </script>
+        <a href="%20" title="github" target="_blank"><i class="remixicon-github-fill"></i></a>
+        
+        
+        
+        <script>
+        </script>
+        <a href="%20" title="mail" target="_blank"><i class="remixicon-mail-fill"></i></a>
+        
+        
+        
+        <script>
+        </script>
+        <a href="%20" title="qq" target="_blank"><i class="remixicon-qq-fill"></i></a>
+        
+        
+        
+        <script>
+        </script>
+        <a href="%20" title="wechat" target="_blank"><i class="remixicon-wechat-fill"></i></a>
+        
+        
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+  <div class="content">
+    <div class="post_page">
+      <div class="post animated fadeInDown">
+        <div class="post_title post_detail_title">
+          <h2><a href='/posts/collections-%E5%B7%A5%E5%85%B7%E7%B1%BB%E5%92%8C-arrays-%E5%B7%A5%E5%85%B7%E7%B1%BB%E5%B8%B8%E8%A7%81%E6%96%B9%E6%B3%95/'>测试样式</a></h2>
+          <span class="date">2020.04.24</span>
+        </div>
+        <div class="post_content markdown"><h2 id="collections">Collections</h2>
+<p>Collections 工具类常用方法:</p>
+<ol>
+<li>排序</li>
+<li>查找,替换操作</li>
+<li>同步控制(不推荐，需要线程安全的集合类型时请考虑使用 JUC 包下的并发集合)</li>
+</ol>
+<h3 id="排序操作">排序操作</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">reverse</span><span style="color:#f92672">(</span>List list<span style="color:#f92672">)</span><span style="color:#75715e">//反转
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">shuffle</span><span style="color:#f92672">(</span>List list<span style="color:#f92672">)</span><span style="color:#75715e">//随机排序
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">sort</span><span style="color:#f92672">(</span>List list<span style="color:#f92672">)</span><span style="color:#75715e">//按自然排序的升序排序
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">sort</span><span style="color:#f92672">(</span>List list<span style="color:#f92672">,</span> Comparator c<span style="color:#f92672">)</span><span style="color:#75715e">//定制排序，由Comparator控制排序逻辑
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">swap</span><span style="color:#f92672">(</span>List list<span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span> i <span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span> j<span style="color:#f92672">)</span><span style="color:#75715e">//交换两个索引位置的元素
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">rotate</span><span style="color:#f92672">(</span>List list<span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span> distance<span style="color:#f92672">)</span><span style="color:#75715e">//旋转。当distance为正数时，将list后distance个元素整体移到前面。当distance为负数时，将 list的前distance个元素整体移到后面。
+</span></code></pre></div><p><strong>示例代码:</strong></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">ArrayList<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> arrayList <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ArrayList<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;();</span>
+arrayList<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(-</span>1<span style="color:#f92672">);</span>
+arrayList<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(</span>3<span style="color:#f92672">);</span>
+arrayList<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(</span>3<span style="color:#f92672">);</span>
+arrayList<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(-</span>5<span style="color:#f92672">);</span>
+arrayList<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(</span>7<span style="color:#f92672">);</span>
+arrayList<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(</span>4<span style="color:#f92672">);</span>
+arrayList<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(-</span>9<span style="color:#f92672">);</span>
+arrayList<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(-</span>7<span style="color:#f92672">);</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;原始数组:&#34;</span><span style="color:#f92672">);</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>arrayList<span style="color:#f92672">);</span>
+<span style="color:#75715e">// void reverse(List list)：反转
+</span><span style="color:#75715e"></span>Collections<span style="color:#f92672">.</span><span style="color:#a6e22e">reverse</span><span style="color:#f92672">(</span>arrayList<span style="color:#f92672">);</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Collections.reverse(arrayList):&#34;</span><span style="color:#f92672">);</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>arrayList<span style="color:#f92672">);</span>
+
+
+Collections<span style="color:#f92672">.</span><span style="color:#a6e22e">rotate</span><span style="color:#f92672">(</span>arrayList<span style="color:#f92672">,</span> 4<span style="color:#f92672">);</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Collections.rotate(arrayList, 4):&#34;</span><span style="color:#f92672">);</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>arrayList<span style="color:#f92672">);</span>
+
+<span style="color:#75715e">// void sort(List list),按自然排序的升序排序
+</span><span style="color:#75715e"></span>Collections<span style="color:#f92672">.</span><span style="color:#a6e22e">sort</span><span style="color:#f92672">(</span>arrayList<span style="color:#f92672">);</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Collections.sort(arrayList):&#34;</span><span style="color:#f92672">);</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>arrayList<span style="color:#f92672">);</span>
+
+<span style="color:#75715e">// void shuffle(List list),随机排序
+</span><span style="color:#75715e"></span>Collections<span style="color:#f92672">.</span><span style="color:#a6e22e">shuffle</span><span style="color:#f92672">(</span>arrayList<span style="color:#f92672">);</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Collections.shuffle(arrayList):&#34;</span><span style="color:#f92672">);</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>arrayList<span style="color:#f92672">);</span>
+
+<span style="color:#75715e">// void swap(List list, int i , int j),交换两个索引位置的元素
+</span><span style="color:#75715e"></span>Collections<span style="color:#f92672">.</span><span style="color:#a6e22e">swap</span><span style="color:#f92672">(</span>arrayList<span style="color:#f92672">,</span> 2<span style="color:#f92672">,</span> 5<span style="color:#f92672">);</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Collections.swap(arrayList, 2, 5):&#34;</span><span style="color:#f92672">);</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>arrayList<span style="color:#f92672">);</span>
+
+<span style="color:#75715e">// 定制排序的用法
+</span><span style="color:#75715e"></span>Collections<span style="color:#f92672">.</span><span style="color:#a6e22e">sort</span><span style="color:#f92672">(</span>arrayList<span style="color:#f92672">,</span> <span style="color:#66d9ef">new</span> Comparator<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;()</span> <span style="color:#f92672">{</span>
+
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">compare</span><span style="color:#f92672">(</span>Integer o1<span style="color:#f92672">,</span> Integer o2<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> o2<span style="color:#f92672">.</span><span style="color:#a6e22e">compareTo</span><span style="color:#f92672">(</span>o1<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">});</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;定制排序后：&#34;</span><span style="color:#f92672">);</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>arrayList<span style="color:#f92672">);</span>
+</code></pre></div><h3 id="查找替换操作">查找,替换操作</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">binarySearch</span><span style="color:#f92672">(</span>List list<span style="color:#f92672">,</span> Object key<span style="color:#f92672">)</span><span style="color:#75715e">//对List进行二分查找，返回索引，注意List必须是有序的
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">max</span><span style="color:#f92672">(</span>Collection coll<span style="color:#f92672">)</span><span style="color:#75715e">//根据元素的自然顺序，返回最大的元素。 类比int min(Collection coll)
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">max</span><span style="color:#f92672">(</span>Collection coll<span style="color:#f92672">,</span> Comparator c<span style="color:#f92672">)</span><span style="color:#75715e">//根据定制排序，返回最大元素，排序规则由Comparatator类控制。类比int min(Collection coll, Comparator c)
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">fill</span><span style="color:#f92672">(</span>List list<span style="color:#f92672">,</span> Object obj<span style="color:#f92672">)</span><span style="color:#75715e">//用指定的元素代替指定list中的所有元素。
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">frequency</span><span style="color:#f92672">(</span>Collection c<span style="color:#f92672">,</span> Object o<span style="color:#f92672">)</span><span style="color:#75715e">//统计元素出现次数
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">indexOfSubList</span><span style="color:#f92672">(</span>List list<span style="color:#f92672">,</span> List target<span style="color:#f92672">)</span><span style="color:#75715e">//统计target在list中第一次出现的索引，找不到则返回-1，类比int lastIndexOfSubList(List source, list target).
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">boolean</span> <span style="color:#a6e22e">replaceAll</span><span style="color:#f92672">(</span>List list<span style="color:#f92672">,</span> Object oldVal<span style="color:#f92672">,</span> Object newVal<span style="color:#f92672">),</span> 用新元素替换旧元素
+</code></pre></div><p><strong>示例代码：</strong></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">ArrayList<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> arrayList <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ArrayList<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;();</span>
+arrayList<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(-</span>1<span style="color:#f92672">);</span>
+arrayList<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(</span>3<span style="color:#f92672">);</span>
+arrayList<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(</span>3<span style="color:#f92672">);</span>
+arrayList<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(-</span>5<span style="color:#f92672">);</span>
+arrayList<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(</span>7<span style="color:#f92672">);</span>
+arrayList<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(</span>4<span style="color:#f92672">);</span>
+arrayList<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(-</span>9<span style="color:#f92672">);</span>
+arrayList<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(-</span>7<span style="color:#f92672">);</span>
+ArrayList<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> arrayList2 <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ArrayList<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;();</span>
+arrayList2<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(-</span>3<span style="color:#f92672">);</span>
+arrayList2<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(-</span>5<span style="color:#f92672">);</span>
+arrayList2<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(</span>7<span style="color:#f92672">);</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;原始数组:&#34;</span><span style="color:#f92672">);</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>arrayList<span style="color:#f92672">);</span>
+
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Collections.max(arrayList):&#34;</span><span style="color:#f92672">);</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>Collections<span style="color:#f92672">.</span><span style="color:#a6e22e">max</span><span style="color:#f92672">(</span>arrayList<span style="color:#f92672">));</span>
+
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Collections.min(arrayList):&#34;</span><span style="color:#f92672">);</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>Collections<span style="color:#f92672">.</span><span style="color:#a6e22e">min</span><span style="color:#f92672">(</span>arrayList<span style="color:#f92672">));</span>
+
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Collections.replaceAll(arrayList, 3, -3):&#34;</span><span style="color:#f92672">);</span>
+Collections<span style="color:#f92672">.</span><span style="color:#a6e22e">replaceAll</span><span style="color:#f92672">(</span>arrayList<span style="color:#f92672">,</span> 3<span style="color:#f92672">,</span> <span style="color:#f92672">-</span>3<span style="color:#f92672">);</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>arrayList<span style="color:#f92672">);</span>
+
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Collections.frequency(arrayList, -3):&#34;</span><span style="color:#f92672">);</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>Collections<span style="color:#f92672">.</span><span style="color:#a6e22e">frequency</span><span style="color:#f92672">(</span>arrayList<span style="color:#f92672">,</span> <span style="color:#f92672">-</span>3<span style="color:#f92672">));</span>
+
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Collections.indexOfSubList(arrayList, arrayList2):&#34;</span><span style="color:#f92672">);</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>Collections<span style="color:#f92672">.</span><span style="color:#a6e22e">indexOfSubList</span><span style="color:#f92672">(</span>arrayList<span style="color:#f92672">,</span> arrayList2<span style="color:#f92672">));</span>
+
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Collections.binarySearch(arrayList, 7):&#34;</span><span style="color:#f92672">);</span>
+<span style="color:#75715e">// 对List进行二分查找，返回索引，List必须是有序的
+</span><span style="color:#75715e"></span>Collections<span style="color:#f92672">.</span><span style="color:#a6e22e">sort</span><span style="color:#f92672">(</span>arrayList<span style="color:#f92672">);</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>Collections<span style="color:#f92672">.</span><span style="color:#a6e22e">binarySearch</span><span style="color:#f92672">(</span>arrayList<span style="color:#f92672">,</span> 7<span style="color:#f92672">));</span>
+</code></pre></div><h3 id="同步控制">同步控制</h3>
+<p>Collections提供了多个<code>synchronizedXxx()</code>方法·，该方法可以将指定集合包装成线程同步的集合，从而解决多线程并发访问集合时的线程安全问题。</p>
+<p>我们知道 HashSet，TreeSet，ArrayList,LinkedList,HashMap,TreeMap 都是线程不安全的。Collections提供了多个静态方法可以把他们包装成线程同步的集合。</p>
+<p><strong>最好不要用下面这些方法，效率非常低，需要线程安全的集合类型时请考虑使用 JUC 包下的并发集合。</strong></p>
+<p>方法如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">synchronizedCollection<span style="color:#f92672">(</span>Collection<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span>  c<span style="color:#f92672">)</span> <span style="color:#75715e">//返回指定 collection 支持的同步（线程安全的）collection。
+</span><span style="color:#75715e"></span>synchronizedList<span style="color:#f92672">(</span>List<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> list<span style="color:#f92672">)</span><span style="color:#75715e">//返回指定列表支持的同步（线程安全的）List。
+</span><span style="color:#75715e"></span>synchronizedMap<span style="color:#f92672">(</span>Map<span style="color:#f92672">&lt;</span>K<span style="color:#f92672">,</span>V<span style="color:#f92672">&gt;</span> m<span style="color:#f92672">)</span> <span style="color:#75715e">//返回由指定映射支持的同步（线程安全的）Map。
+</span><span style="color:#75715e"></span>synchronizedSet<span style="color:#f92672">(</span>Set<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> s<span style="color:#f92672">)</span> <span style="color:#75715e">//返回指定 set 支持的同步（线程安全的）set。
+</span></code></pre></div><h3 id="collections还可以设置不可变集合提供了如下三类方法">Collections还可以设置不可变集合，提供了如下三类方法：</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">emptyXxx(): 返回一个空的、不可变的集合对象，此处的集合既可以是List，也可以是Set，还可以是Map。
+singletonXxx(): 返回一个只包含指定对象（只有一个或一个元素）的不可变的集合对象，此处的集合可以是：List，Set，Map。
+unmodifiableXxx(): 返回指定集合对象的不可变视图，此处的集合可以是：List，Set，Map。
+上面三类方法的参数是原有的集合对象，返回值是该集合的”只读“版本。
+</code></pre></div><p><strong>示例代码：</strong></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">ArrayList<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> arrayList <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ArrayList<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;();</span>
+arrayList<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(-</span>1<span style="color:#f92672">);</span>
+arrayList<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(</span>3<span style="color:#f92672">);</span>
+arrayList<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(</span>3<span style="color:#f92672">);</span>
+arrayList<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(-</span>5<span style="color:#f92672">);</span>
+arrayList<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(</span>7<span style="color:#f92672">);</span>
+arrayList<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(</span>4<span style="color:#f92672">);</span>
+arrayList<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(-</span>9<span style="color:#f92672">);</span>
+arrayList<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(-</span>7<span style="color:#f92672">);</span>
+HashSet<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> integers1 <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> HashSet<span style="color:#f92672">&lt;&gt;();</span>
+integers1<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(</span>1<span style="color:#f92672">);</span>
+integers1<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(</span>3<span style="color:#f92672">);</span>
+integers1<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(</span>2<span style="color:#f92672">);</span>
+Map scores <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> HashMap<span style="color:#f92672">();</span>
+scores<span style="color:#f92672">.</span><span style="color:#a6e22e">put</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;语文&#34;</span> <span style="color:#f92672">,</span> 80<span style="color:#f92672">);</span>
+scores<span style="color:#f92672">.</span><span style="color:#a6e22e">put</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Java&#34;</span> <span style="color:#f92672">,</span> 82<span style="color:#f92672">);</span>
+
+<span style="color:#75715e">//Collections.emptyXXX();创建一个空的、不可改变的XXX对象
+</span><span style="color:#75715e"></span>List<span style="color:#f92672">&lt;</span>Object<span style="color:#f92672">&gt;</span> list <span style="color:#f92672">=</span> Collections<span style="color:#f92672">.</span><span style="color:#a6e22e">emptyList</span><span style="color:#f92672">();</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>list<span style="color:#f92672">);</span><span style="color:#75715e">//[]
+</span><span style="color:#75715e"></span>Set<span style="color:#f92672">&lt;</span>Object<span style="color:#f92672">&gt;</span> objects <span style="color:#f92672">=</span> Collections<span style="color:#f92672">.</span><span style="color:#a6e22e">emptySet</span><span style="color:#f92672">();</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>objects<span style="color:#f92672">);</span><span style="color:#75715e">//[]
+</span><span style="color:#75715e"></span>Map<span style="color:#f92672">&lt;</span>Object<span style="color:#f92672">,</span> Object<span style="color:#f92672">&gt;</span> objectObjectMap <span style="color:#f92672">=</span> Collections<span style="color:#f92672">.</span><span style="color:#a6e22e">emptyMap</span><span style="color:#f92672">();</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>objectObjectMap<span style="color:#f92672">);</span><span style="color:#75715e">//{}
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">//Collections.singletonXXX();
+</span><span style="color:#75715e"></span>List<span style="color:#f92672">&lt;</span>ArrayList<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;&gt;</span> arrayLists <span style="color:#f92672">=</span> Collections<span style="color:#f92672">.</span><span style="color:#a6e22e">singletonList</span><span style="color:#f92672">(</span>arrayList<span style="color:#f92672">);</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>arrayLists<span style="color:#f92672">);</span><span style="color:#75715e">//[[-1, 3, 3, -5, 7, 4, -9, -7]]
+</span><span style="color:#75715e">//创建一个只有一个元素，且不可改变的Set对象
+</span><span style="color:#75715e"></span>Set<span style="color:#f92672">&lt;</span>ArrayList<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;&gt;</span> singleton <span style="color:#f92672">=</span> Collections<span style="color:#f92672">.</span><span style="color:#a6e22e">singleton</span><span style="color:#f92672">(</span>arrayList<span style="color:#f92672">);</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>singleton<span style="color:#f92672">);</span><span style="color:#75715e">//[[-1, 3, 3, -5, 7, 4, -9, -7]]
+</span><span style="color:#75715e"></span>Map<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> String<span style="color:#f92672">&gt;</span> nihao <span style="color:#f92672">=</span> Collections<span style="color:#f92672">.</span><span style="color:#a6e22e">singletonMap</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;1&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;nihao&#34;</span><span style="color:#f92672">);</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>nihao<span style="color:#f92672">);</span><span style="color:#75715e">//{1=nihao}
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">//unmodifiableXXX();创建普通XXX对象对应的不可变版本
+</span><span style="color:#75715e"></span>List<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> integers <span style="color:#f92672">=</span> Collections<span style="color:#f92672">.</span><span style="color:#a6e22e">unmodifiableList</span><span style="color:#f92672">(</span>arrayList<span style="color:#f92672">);</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>integers<span style="color:#f92672">);</span><span style="color:#75715e">//[-1, 3, 3, -5, 7, 4, -9, -7]
+</span><span style="color:#75715e"></span>Set<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> integers2 <span style="color:#f92672">=</span> Collections<span style="color:#f92672">.</span><span style="color:#a6e22e">unmodifiableSet</span><span style="color:#f92672">(</span>integers1<span style="color:#f92672">);</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>integers2<span style="color:#f92672">);</span><span style="color:#75715e">//[1, 2, 3]
+</span><span style="color:#75715e"></span>Map<span style="color:#f92672">&lt;</span>Object<span style="color:#f92672">,</span> Object<span style="color:#f92672">&gt;</span> objectObjectMap2 <span style="color:#f92672">=</span> Collections<span style="color:#f92672">.</span><span style="color:#a6e22e">unmodifiableMap</span><span style="color:#f92672">(</span>scores<span style="color:#f92672">);</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>objectObjectMap2<span style="color:#f92672">);</span><span style="color:#75715e">//{Java=82, 语文=80}
+</span><span style="color:#75715e"></span>
+        <span style="color:#75715e">//添加出现异常：java.lang.UnsupportedOperationException
+</span><span style="color:#75715e">//        list.add(1);
+</span><span style="color:#75715e">//        arrayLists.add(arrayList);
+</span><span style="color:#75715e">//        integers.add(1);
+</span></code></pre></div><h2 id="arrays类的常见操作">Arrays类的常见操作</h2>
+<ol>
+<li>排序 : <code>sort()</code></li>
+<li>查找 : <code>binarySearch()</code></li>
+<li>比较: <code>equals()</code></li>
+<li>填充 : <code>fill()</code></li>
+<li>转列表:  <code>asList()</code></li>
+<li>转字符串 : <code>toString()</code></li>
+<li>复制: <code>copyOf()</code></li>
+</ol>
+<h3 id="排序--sort">排序 : <code>sort()</code></h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">// *************排序 sort****************
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span> a<span style="color:#f92672">[]</span> <span style="color:#f92672">=</span> <span style="color:#f92672">{</span> 1<span style="color:#f92672">,</span> 3<span style="color:#f92672">,</span> 2<span style="color:#f92672">,</span> 7<span style="color:#f92672">,</span> 6<span style="color:#f92672">,</span> 5<span style="color:#f92672">,</span> 4<span style="color:#f92672">,</span> 9 <span style="color:#f92672">};</span>
+<span style="color:#75715e">// sort(int[] a)方法按照数字顺序排列指定的数组。
+</span><span style="color:#75715e"></span>Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">sort</span><span style="color:#f92672">(</span>a<span style="color:#f92672">);</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Arrays.sort(a):&#34;</span><span style="color:#f92672">);</span>
+<span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> i <span style="color:#f92672">:</span> a<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">print</span><span style="color:#f92672">(</span>i<span style="color:#f92672">);</span>
+<span style="color:#f92672">}</span>
+<span style="color:#75715e">// 换行
+</span><span style="color:#75715e"></span>System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">();</span>
+
+<span style="color:#75715e">// sort(int[] a,int fromIndex,int toIndex)按升序排列数组的指定范围
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span> b<span style="color:#f92672">[]</span> <span style="color:#f92672">=</span> <span style="color:#f92672">{</span> 1<span style="color:#f92672">,</span> 3<span style="color:#f92672">,</span> 2<span style="color:#f92672">,</span> 7<span style="color:#f92672">,</span> 6<span style="color:#f92672">,</span> 5<span style="color:#f92672">,</span> 4<span style="color:#f92672">,</span> 9 <span style="color:#f92672">};</span>
+Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">sort</span><span style="color:#f92672">(</span>b<span style="color:#f92672">,</span> 2<span style="color:#f92672">,</span> 6<span style="color:#f92672">);</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Arrays.sort(b, 2, 6):&#34;</span><span style="color:#f92672">);</span>
+<span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> i <span style="color:#f92672">:</span> b<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">print</span><span style="color:#f92672">(</span>i<span style="color:#f92672">);</span>
+<span style="color:#f92672">}</span>
+<span style="color:#75715e">// 换行
+</span><span style="color:#75715e"></span>System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">();</span>
+
+<span style="color:#66d9ef">int</span> c<span style="color:#f92672">[]</span> <span style="color:#f92672">=</span> <span style="color:#f92672">{</span> 1<span style="color:#f92672">,</span> 3<span style="color:#f92672">,</span> 2<span style="color:#f92672">,</span> 7<span style="color:#f92672">,</span> 6<span style="color:#f92672">,</span> 5<span style="color:#f92672">,</span> 4<span style="color:#f92672">,</span> 9 <span style="color:#f92672">};</span>
+<span style="color:#75715e">// parallelSort(int[] a) 按照数字顺序排列指定的数组(并行的)。同sort方法一样也有按范围的排序
+</span><span style="color:#75715e"></span>Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">parallelSort</span><span style="color:#f92672">(</span>c<span style="color:#f92672">);</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Arrays.parallelSort(c)：&#34;</span><span style="color:#f92672">);</span>
+<span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> i <span style="color:#f92672">:</span> c<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">print</span><span style="color:#f92672">(</span>i<span style="color:#f92672">);</span>
+<span style="color:#f92672">}</span>
+<span style="color:#75715e">// 换行
+</span><span style="color:#75715e"></span>System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">();</span>
+
+<span style="color:#75715e">// parallelSort给字符数组排序，sort也可以
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">char</span> d<span style="color:#f92672">[]</span> <span style="color:#f92672">=</span> <span style="color:#f92672">{</span> <span style="color:#e6db74">&#39;a&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;f&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;b&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;c&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;e&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;A&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;C&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;B&#39;</span> <span style="color:#f92672">};</span>
+Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">parallelSort</span><span style="color:#f92672">(</span>d<span style="color:#f92672">);</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Arrays.parallelSort(d)：&#34;</span><span style="color:#f92672">);</span>
+<span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">char</span> d2 <span style="color:#f92672">:</span> d<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">print</span><span style="color:#f92672">(</span>d2<span style="color:#f92672">);</span>
+<span style="color:#f92672">}</span>
+<span style="color:#75715e">// 换行
+</span><span style="color:#75715e"></span>System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">();</span>
+</code></pre></div><p>在做算法面试题的时候，我们还可能会经常遇到对字符串排序的情况,<code>Arrays.sort()</code> 对每个字符串的特定位置进行比较，然后按照升序排序。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">String<span style="color:#f92672">[]</span> strs <span style="color:#f92672">=</span> <span style="color:#f92672">{</span> <span style="color:#e6db74">&#34;abcdehg&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;abcdefg&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;abcdeag&#34;</span> <span style="color:#f92672">};</span>
+Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">sort</span><span style="color:#f92672">(</span>strs<span style="color:#f92672">);</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">toString</span><span style="color:#f92672">(</span>strs<span style="color:#f92672">));</span><span style="color:#75715e">//[abcdeag, abcdefg, abcdehg]
+</span></code></pre></div><h3 id="查找--binarysearch">查找 : <code>binarySearch()</code></h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">// *************查找 binarySearch()****************
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">char</span><span style="color:#f92672">[]</span> e <span style="color:#f92672">=</span> <span style="color:#f92672">{</span> <span style="color:#e6db74">&#39;a&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;f&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;b&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;c&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;e&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;A&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;C&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;B&#39;</span> <span style="color:#f92672">};</span>
+<span style="color:#75715e">// 排序后再进行二分查找，否则找不到
+</span><span style="color:#75715e"></span>Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">sort</span><span style="color:#f92672">(</span>e<span style="color:#f92672">);</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Arrays.sort(e)&#34;</span> <span style="color:#f92672">+</span> Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">toString</span><span style="color:#f92672">(</span>e<span style="color:#f92672">));</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Arrays.binarySearch(e, &#39;c&#39;)：&#34;</span><span style="color:#f92672">);</span>
+<span style="color:#66d9ef">int</span> s <span style="color:#f92672">=</span> Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">binarySearch</span><span style="color:#f92672">(</span>e<span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;c&#39;</span><span style="color:#f92672">);</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;字符c在数组的位置：&#34;</span> <span style="color:#f92672">+</span> s<span style="color:#f92672">);</span>
+</code></pre></div><h3 id="比较-equals">比较: <code>equals()</code></h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">// *************比较 equals****************
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">char</span><span style="color:#f92672">[]</span> e <span style="color:#f92672">=</span> <span style="color:#f92672">{</span> <span style="color:#e6db74">&#39;a&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;f&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;b&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;c&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;e&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;A&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;C&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;B&#39;</span> <span style="color:#f92672">};</span>
+<span style="color:#66d9ef">char</span><span style="color:#f92672">[]</span> f <span style="color:#f92672">=</span> <span style="color:#f92672">{</span> <span style="color:#e6db74">&#39;a&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;f&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;b&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;c&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;e&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;A&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;C&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;B&#39;</span> <span style="color:#f92672">};</span>
+<span style="color:#75715e">/*
+</span><span style="color:#75715e">		* 元素数量相同，并且相同位置的元素相同。 另外，如果两个数组引用都是null，则它们被认为是相等的 。
+</span><span style="color:#75715e">		*/</span>
+<span style="color:#75715e">// 输出true
+</span><span style="color:#75715e"></span>System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Arrays.equals(e, f):&#34;</span> <span style="color:#f92672">+</span> Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">equals</span><span style="color:#f92672">(</span>e<span style="color:#f92672">,</span> f<span style="color:#f92672">));</span>
+</code></pre></div><h3 id="填充--fill">填充 : <code>fill()</code></h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">// *************填充fill(批量初始化)****************
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span><span style="color:#f92672">[]</span> g <span style="color:#f92672">=</span> <span style="color:#f92672">{</span> 1<span style="color:#f92672">,</span> 2<span style="color:#f92672">,</span> 3<span style="color:#f92672">,</span> 3<span style="color:#f92672">,</span> 3<span style="color:#f92672">,</span> 3<span style="color:#f92672">,</span> 6<span style="color:#f92672">,</span> 6<span style="color:#f92672">,</span> 6 <span style="color:#f92672">};</span>
+<span style="color:#75715e">// 数组中所有元素重新分配值
+</span><span style="color:#75715e"></span>Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">fill</span><span style="color:#f92672">(</span>g<span style="color:#f92672">,</span> 3<span style="color:#f92672">);</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Arrays.fill(g, 3)：&#34;</span><span style="color:#f92672">);</span>
+<span style="color:#75715e">// 输出结果：333333333
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> i <span style="color:#f92672">:</span> g<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">print</span><span style="color:#f92672">(</span>i<span style="color:#f92672">);</span>
+<span style="color:#f92672">}</span>
+<span style="color:#75715e">// 换行
+</span><span style="color:#75715e"></span>System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">();</span>
+
+<span style="color:#66d9ef">int</span><span style="color:#f92672">[]</span> h <span style="color:#f92672">=</span> <span style="color:#f92672">{</span> 1<span style="color:#f92672">,</span> 2<span style="color:#f92672">,</span> 3<span style="color:#f92672">,</span> 3<span style="color:#f92672">,</span> 3<span style="color:#f92672">,</span> 3<span style="color:#f92672">,</span> 6<span style="color:#f92672">,</span> 6<span style="color:#f92672">,</span> 6<span style="color:#f92672">,</span> <span style="color:#f92672">};</span>
+<span style="color:#75715e">// 数组中指定范围元素重新分配值
+</span><span style="color:#75715e"></span>Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">fill</span><span style="color:#f92672">(</span>h<span style="color:#f92672">,</span> 0<span style="color:#f92672">,</span> 2<span style="color:#f92672">,</span> 9<span style="color:#f92672">);</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Arrays.fill(h, 0, 2, 9);：&#34;</span><span style="color:#f92672">);</span>
+<span style="color:#75715e">// 输出结果：993333666
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> i <span style="color:#f92672">:</span> h<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">print</span><span style="color:#f92672">(</span>i<span style="color:#f92672">);</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><h3 id="转列表-aslist">转列表 <code>asList()</code></h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">// *************转列表 asList()****************
+</span><span style="color:#75715e"></span><span style="color:#75715e">/**
+</span><span style="color:#75715e"> * 返回由指定数组支持的固定大小的列表。
+</span><span style="color:#75715e"> * （将返回的列表更改为“写入数组”。）该方法作为基于数组和基于集合的API之间的桥梁，与Collection.toArray()相结合 。
+</span><span style="color:#75715e"> * 返回的列表是可序列化的，并实现RandomAccess 。
+</span><span style="color:#75715e"> * 此方法还提供了一种方便的方式来创建一个初始化为包含几个元素的固定大小的列表如下：
+</span><span style="color:#75715e"> */</span>
+List<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> stooges <span style="color:#f92672">=</span> Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">asList</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Larry&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;Moe&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;Curly&#34;</span><span style="color:#f92672">);</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>stooges<span style="color:#f92672">);</span>
+</code></pre></div><h3 id="转字符串-tostring">转字符串 <code>toString()</code></h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">// *************转字符串 toString()****************
+</span><span style="color:#75715e"></span><span style="color:#75715e">/*
+</span><span style="color:#75715e"> * 返回指定数组的内容的字符串表示形式。
+</span><span style="color:#75715e"> */</span>
+<span style="color:#66d9ef">char</span><span style="color:#f92672">[]</span> k <span style="color:#f92672">=</span> <span style="color:#f92672">{</span> <span style="color:#e6db74">&#39;a&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;f&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;b&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;c&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;e&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;A&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;C&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;B&#39;</span> <span style="color:#f92672">};</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">toString</span><span style="color:#f92672">(</span>k<span style="color:#f92672">));</span><span style="color:#75715e">// [a, f, b, c, e, A, C, B]
+</span></code></pre></div><h3 id="复制-copyof">复制 <code>copyOf()</code></h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">// *************复制 copy****************
+</span><span style="color:#75715e">// copyOf 方法实现数组复制,h为数组，6为复制的长度
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span><span style="color:#f92672">[]</span> h <span style="color:#f92672">=</span> <span style="color:#f92672">{</span> 1<span style="color:#f92672">,</span> 2<span style="color:#f92672">,</span> 3<span style="color:#f92672">,</span> 3<span style="color:#f92672">,</span> 3<span style="color:#f92672">,</span> 3<span style="color:#f92672">,</span> 6<span style="color:#f92672">,</span> 6<span style="color:#f92672">,</span> 6<span style="color:#f92672">,</span> <span style="color:#f92672">};</span>
+<span style="color:#66d9ef">int</span> i<span style="color:#f92672">[]</span> <span style="color:#f92672">=</span> Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">copyOf</span><span style="color:#f92672">(</span>h<span style="color:#f92672">,</span> 6<span style="color:#f92672">);</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Arrays.copyOf(h, 6);：&#34;</span><span style="color:#f92672">);</span>
+<span style="color:#75715e">// 输出结果：123333
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> j <span style="color:#f92672">:</span> i<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">print</span><span style="color:#f92672">(</span>j<span style="color:#f92672">);</span>
+<span style="color:#f92672">}</span>
+<span style="color:#75715e">// 换行
+</span><span style="color:#75715e"></span>System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">();</span>
+<span style="color:#75715e">// copyOfRange将指定数组的指定范围复制到新数组中
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span> j<span style="color:#f92672">[]</span> <span style="color:#f92672">=</span> Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">copyOfRange</span><span style="color:#f92672">(</span>h<span style="color:#f92672">,</span> 6<span style="color:#f92672">,</span> 11<span style="color:#f92672">);</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Arrays.copyOfRange(h, 6, 11)：&#34;</span><span style="color:#f92672">);</span>
+<span style="color:#75715e">// 输出结果66600(h数组只有9个元素这里是从索引6到索引11复制所以不足的就为0)
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> j2 <span style="color:#f92672">:</span> j<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">print</span><span style="color:#f92672">(</span>j2<span style="color:#f92672">);</span>
+<span style="color:#f92672">}</span>
+<span style="color:#75715e">// 换行
+</span><span style="color:#75715e"></span>System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">();</span>
+</code></pre></div></div>
+        <div class="post_footer">
+          
+          <div class="meta">
+            <div class="info">
+              <span class="field tags">
+                <i class="remixicon-stack-line"></i>
+                
+                <a href="https://ffppss.github.io/tags/c/">c</a>
+                
+                <a href="https://ffppss.github.io/tags/b/">b</a>
+                
+                <a href="https://ffppss.github.io/tags/a/">a</a>
+                
+              </span>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+      
+      
+    </div>
+  </div>
+  <a id="back_to_top" href="#" class="back_to_top"><span>△</span></a>
+</div>
+
+<footer class="footer">
+  <div class="powered_by" style="color: #cccccc;">
+    Proudly published with <a href="http://www.gohugo.io/">Hugo&nbsp;&nbsp;</a>
+    Theme <a href="https://github.com/imzeuk/hugo-theme-zozo themes/zozo">zozo</a>
+  </div>
+
+  
+</footer>
+
+
+
+<script src="https://ffppss.github.io/js/jquery-3.3.1.min.js"></script>
+<script src="https://ffppss.github.io/js/zozo.js"></script>
+<script src="https://ffppss.github.io/js/highlight.pack.js"></script>
+<link  href="https://ffppss.github.io/css/fancybox.min.css" rel="stylesheet">
+<script src="https://ffppss.github.io/js/fancybox.min.js"></script>
+
+<script>hljs.initHighlightingOnLoad()</script>
+
+
+  <script type="text/javascript" async src="https://cdn.bootcss.com/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[\[','\]\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+
+MathJax.Hub.Queue(function() {
+    
+    
+    
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<style>
+code.has-jax {
+    font: inherit;
+    font-size: 100%;
+    background: inherit;
+    border: inherit;
+    color: #515151;
+}
+</style>
+
+
+
+
+
+
+</body>
+</html>

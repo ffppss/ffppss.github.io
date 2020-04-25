@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="zh-cn" >
+<head>
+  <meta charset="utf-8"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+  
+  <meta name="author"
+        content="Zeuk"/>
+
+  
+  <meta name="description" content="Java 8另一个新增的重要特性就是引入了新的时间和日期API，它们被包含在java.time包中。借助新的时间和日期API可以以更简洁的方法处理时间和日期。 在介绍本篇文章内容之前，我们先来讨论Java 8为什"/>
+  
+
+  
+  
+  <meta name="keywords" content="Hugo, theme, zozo"/>
+  
+
+  
+  <link rel="canonical" href="https://ffppss.github.io/posts/java8%E6%96%B0%E7%89%B9%E6%80%A7%E4%B9%8B%E6%96%B0%E7%9A%84%E6%97%B6%E9%97%B4%E5%92%8C%E6%97%A5%E6%9C%9Fapi/"/>
+
+  
+
+  <title>Java 8新特性：新的时间和日期API &middot; 无尽光芒</title>
+
+  <link rel="shortcut icon" href="https://ffppss.github.io/images/favicon.ico"/>
+  <link rel="stylesheet" href="https://ffppss.github.io/css/animate.min.css"/>
+  <link rel="stylesheet" href="https://ffppss.github.io/css/remixicon.css"/>
+  <link rel="stylesheet" href="https://ffppss.github.io/css/zozo.css"/>
+  <link rel="stylesheet" href="https://ffppss.github.io/css/highlight.css"/>
+  <link rel="stylesheet" href="https://ffppss.github.io/css/custom.css"/>
+
+  
+  
+
+  <script>
+    (function(d) {
+      var config = {
+        kitId: 'kfn1kkp',
+        scriptTimeout: 3000,
+        async: true
+      },
+      h=d.documentElement,t=setTimeout(function(){h.className=h.className.replace(/\bwf-loading\b/g,"")+" wf-inactive";},config.scriptTimeout),tk=d.createElement("script"),f=false,s=d.getElementsByTagName("script")[0],a;h.className+=" wf-loading";tk.src='https://use.typekit.net/'+config.kitId+'.js';tk.async=true;tk.onload=tk.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete"&&a!="loaded")return;f=true;clearTimeout(t);try{Typekit.load(config)}catch(e){}};s.parentNode.insertBefore(tk,s)
+    })(document);
+  </script>
+</head>
+
+<body>
+<div class="main animated">
+  <div class="nav_container animated fadeInDown">
+  <div class="site_nav" id="site_nav">
+    <ul>
+      
+      <li>
+        <a href="/">首页</a>
+      </li>
+      
+      <li>
+        <a href="/posts/">归档</a>
+      </li>
+      
+      <li>
+        <a href="/tags/">标签</a>
+      </li>
+      
+      <li>
+        <a href="/about/">关于</a>
+      </li>
+      
+    </ul>
+  </div>
+  <div class="menu_icon">
+    <a id="menu_icon"><i class="remixicon-links-line"></i></a>
+  </div>
+</div>
+
+  <div class="header animated fadeInDown">
+  <div class="site_title_container">
+    <div class="site_title">
+      <h1>
+        <a href="https://ffppss.github.io">
+          <span>无尽光芒</span>
+          <img src="https://ffppss.github.io/images/logo.svg"/>
+        </a>
+      </h1>
+    </div>
+    <div class="description">
+      <p class="sub_title">老冯的杂货铺</p>
+      <div class="text_center">
+        <img src="https://ffppss.github.io/images/ball.png" style="width:64px;height:64px;"/>
+      </div>
+      <div class="my_socials">
+        
+        
+        <script>
+        </script>
+        <a href="%20" title="github" target="_blank"><i class="remixicon-github-fill"></i></a>
+        
+        
+        
+        <script>
+        </script>
+        <a href="%20" title="mail" target="_blank"><i class="remixicon-mail-fill"></i></a>
+        
+        
+        
+        <script>
+        </script>
+        <a href="%20" title="qq" target="_blank"><i class="remixicon-qq-fill"></i></a>
+        
+        
+        
+        <script>
+        </script>
+        <a href="%20" title="wechat" target="_blank"><i class="remixicon-wechat-fill"></i></a>
+        
+        
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+  <div class="content">
+    <div class="post_page">
+      <div class="post animated fadeInDown">
+        <div class="post_title post_detail_title">
+          <h2><a href='/posts/java8%E6%96%B0%E7%89%B9%E6%80%A7%E4%B9%8B%E6%96%B0%E7%9A%84%E6%97%B6%E9%97%B4%E5%92%8C%E6%97%A5%E6%9C%9Fapi/'>Java 8新特性：新的时间和日期API</a></h2>
+          <span class="date">2020.04.24</span>
+        </div>
+        <div class="post_content markdown"><p>Java 8另一个新增的重要特性就是引入了新的时间和日期API，它们被包含在<code>java.time</code>包中。借助新的时间和日期API可以以更简洁的方法处理时间和日期。</p>
+<p>在介绍本篇文章内容之前，我们先来讨论Java 8为什么要引入新的日期API，与之前的时间和日期处理方式有什么不同？</p>
+<p>在Java 8之前，所有关于时间和日期的API都存在各种使用方面的缺陷，主要有：</p>
+<ol>
+<li>Java的<code>java.util.Date</code>和<code>java.util.Calendar</code>类易用性差，不支持时区，并且是可变的，也就意味着他们都不是线程安全的；</li>
+<li>用于格式化日期的类<code>DateFormat</code>被放在<code>java.text</code>包中，它是一个抽象类，所以我们需要实例化一个<code>SimpleDateFormat</code>对象来处理日期格式化，并且<code>DateFormat</code>也是非线程安全，这意味着如果你在多线程程序中调用同一个<code>DateFormat</code>对象，会得到意想不到的结果。</li>
+<li>对日期的计算方式繁琐，而且容易出错，因为月份是从0开始的，这意味着从<code>Calendar</code>中获取的月份需要加一才能表示当前月份。</li>
+</ol>
+<p>由于以上这些问题，出现了一些三方的日期处理框架，例如Joda-Time，data4j等开源项目。但是，Java需要一套标准的用于处理时间和日期的框架，于是Java 8中引入了新的日期API。新的日期API是<a href="https://jcp.org/en/jsr/detail?id=310">JSR-310</a>规范的实现，Joda-Time框架的作者正是JSR-310的规范的倡导者，所以能从Java 8的日期API中看到很多Joda-Time的特性。</p>
+<h1 id="java-8日期时间类">Java 8日期/时间类</h1>
+<p>Java 8的日期和时间类包含<code>LocalDate</code>、<code>LocalTime</code>、<code>Instant</code>、<code>Duration</code>以及<code>Period</code>，这些类都包含在<code>java.time</code>包中，下面我们看看这些类的用法。</p>
+<h2 id="localdate和localtime">LocalDate和LocalTime</h2>
+<p><code>LocalDate</code>类表示一个具体的日期，但不包含具体时间，也不包含时区信息。可以通过<code>LocalDate</code>的静态方法<code>of()</code>创建一个实例，<code>LocalDate</code>也包含一些方法用来获取年份，月份，天，星期几等：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">LocalDate localDate <span style="color:#f92672">=</span> LocalDate<span style="color:#f92672">.</span><span style="color:#a6e22e">of</span><span style="color:#f92672">(</span>2017<span style="color:#f92672">,</span> 1<span style="color:#f92672">,</span> 4<span style="color:#f92672">);</span>     <span style="color:#75715e">// 初始化一个日期：2017-01-04
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span> year <span style="color:#f92672">=</span> localDate<span style="color:#f92672">.</span><span style="color:#a6e22e">getYear</span><span style="color:#f92672">();</span>                     <span style="color:#75715e">// 年份：2017
+</span><span style="color:#75715e"></span>Month month <span style="color:#f92672">=</span> localDate<span style="color:#f92672">.</span><span style="color:#a6e22e">getMonth</span><span style="color:#f92672">();</span>                 <span style="color:#75715e">// 月份：JANUARY
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span> dayOfMonth <span style="color:#f92672">=</span> localDate<span style="color:#f92672">.</span><span style="color:#a6e22e">getDayOfMonth</span><span style="color:#f92672">();</span>         <span style="color:#75715e">// 月份中的第几天：4
+</span><span style="color:#75715e"></span>DayOfWeek dayOfWeek <span style="color:#f92672">=</span> localDate<span style="color:#f92672">.</span><span style="color:#a6e22e">getDayOfWeek</span><span style="color:#f92672">();</span>     <span style="color:#75715e">// 一周的第几天：WEDNESDAY
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span> length <span style="color:#f92672">=</span> localDate<span style="color:#f92672">.</span><span style="color:#a6e22e">lengthOfMonth</span><span style="color:#f92672">();</span>             <span style="color:#75715e">// 月份的天数：31
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">boolean</span> leapYear <span style="color:#f92672">=</span> localDate<span style="color:#f92672">.</span><span style="color:#a6e22e">isLeapYear</span><span style="color:#f92672">();</span>          <span style="color:#75715e">// 是否为闰年：false
+</span></code></pre></div><p>也可以调用静态方法<code>now()</code>来获取当前日期：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">LocalDate now <span style="color:#f92672">=</span> LocalDate<span style="color:#f92672">.</span><span style="color:#a6e22e">now</span><span style="color:#f92672">();</span>
+</code></pre></div><p><code>LocalTime</code>和<code>LocalDate</code>类似，他们之间的区别在于<code>LocalDate</code>不包含具体时间，而<code>LocalTime</code>包含具体时间，例如：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">LocalTime localTime <span style="color:#f92672">=</span> LocalTime<span style="color:#f92672">.</span><span style="color:#a6e22e">of</span><span style="color:#f92672">(</span>17<span style="color:#f92672">,</span> 23<span style="color:#f92672">,</span> 52<span style="color:#f92672">);</span>     <span style="color:#75715e">// 初始化一个时间：17:23:52
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span> hour <span style="color:#f92672">=</span> localTime<span style="color:#f92672">.</span><span style="color:#a6e22e">getHour</span><span style="color:#f92672">();</span>                     <span style="color:#75715e">// 时：17
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span> minute <span style="color:#f92672">=</span> localTime<span style="color:#f92672">.</span><span style="color:#a6e22e">getMinute</span><span style="color:#f92672">();</span>                 <span style="color:#75715e">// 分：23
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span> second <span style="color:#f92672">=</span> localTime<span style="color:#f92672">.</span><span style="color:#a6e22e">getSecond</span><span style="color:#f92672">();</span>                 <span style="color:#75715e">// 秒：52
+</span></code></pre></div><h2 id="localdatetime">LocalDateTime</h2>
+<p><code>LocalDateTime</code>类是<code>LocalDate</code>和<code>LocalTime</code>的结合体，可以通过<code>of()</code>方法直接创建，也可以调用<code>LocalDate</code>的<code>atTime()</code>方法或<code>LocalTime</code>的<code>atDate()</code>方法将<code>LocalDate</code>或<code>LocalTime</code>合并成一个<code>LocalDateTime</code>：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">LocalDateTime ldt1 <span style="color:#f92672">=</span> LocalDateTime<span style="color:#f92672">.</span><span style="color:#a6e22e">of</span><span style="color:#f92672">(</span>2017<span style="color:#f92672">,</span> Month<span style="color:#f92672">.</span><span style="color:#a6e22e">JANUARY</span><span style="color:#f92672">,</span> 4<span style="color:#f92672">,</span> 17<span style="color:#f92672">,</span> 23<span style="color:#f92672">,</span> 52<span style="color:#f92672">);</span>
+
+LocalDate localDate <span style="color:#f92672">=</span> LocalDate<span style="color:#f92672">.</span><span style="color:#a6e22e">of</span><span style="color:#f92672">(</span>2017<span style="color:#f92672">,</span> Month<span style="color:#f92672">.</span><span style="color:#a6e22e">JANUARY</span><span style="color:#f92672">,</span> 4<span style="color:#f92672">);</span>
+LocalTime localTime <span style="color:#f92672">=</span> LocalTime<span style="color:#f92672">.</span><span style="color:#a6e22e">of</span><span style="color:#f92672">(</span>17<span style="color:#f92672">,</span> 23<span style="color:#f92672">,</span> 52<span style="color:#f92672">);</span>
+LocalDateTime ldt2 <span style="color:#f92672">=</span> localDate<span style="color:#f92672">.</span><span style="color:#a6e22e">atTime</span><span style="color:#f92672">(</span>localTime<span style="color:#f92672">);</span>
+</code></pre></div><p><code>LocalDateTime</code>也提供用于向<code>LocalDate</code>和<code>LocalTime</code>的转化：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">LocalDate date <span style="color:#f92672">=</span> ldt1<span style="color:#f92672">.</span><span style="color:#a6e22e">toLocalDate</span><span style="color:#f92672">();</span>
+LocalTime time <span style="color:#f92672">=</span> ldt1<span style="color:#f92672">.</span><span style="color:#a6e22e">toLocalTime</span><span style="color:#f92672">();</span>
+</code></pre></div><h2 id="instant">Instant</h2>
+<p><code>Instant</code>用于表示一个时间戳，它与我们常使用的<code>System.currentTimeMillis()</code>有些类似，不过<code>Instant</code>可以精确到纳秒（Nano-Second），<code>System.currentTimeMillis()</code>方法只精确到毫秒（Milli-Second）。如果查看<code>Instant</code>源码，发现它的内部使用了两个常量，<code>seconds</code>表示从1970-01-01 00:00:00开始到现在的秒数，<code>nanos</code>表示纳秒部分（<code>nanos</code>的值不会超过<code>999,999,999</code>）。<code>Instant</code>除了使用<code>now()</code>方法创建外，还可以通过<code>ofEpochSecond</code>方法创建：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Instant instant <span style="color:#f92672">=</span> Instant<span style="color:#f92672">.</span><span style="color:#a6e22e">ofEpochSecond</span><span style="color:#f92672">(</span>120<span style="color:#f92672">,</span> 100000<span style="color:#f92672">);</span>
+</code></pre></div><p><code>ofEpochSecond()</code>方法的第一个参数为秒，第二个参数为纳秒，上面的代码表示从1970-01-01 00:00:00开始后两分钟的10万纳秒的时刻，控制台上的输出为：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">1970<span style="color:#f92672">-</span>01<span style="color:#f92672">-</span>01T00<span style="color:#f92672">:</span>02<span style="color:#f92672">:</span>00<span style="color:#f92672">.</span><span style="color:#a6e22e">000100Z</span>
+</code></pre></div><h2 id="duration">Duration</h2>
+<p><code>Duration</code>的内部实现与<code>Instant</code>类似，也是包含两部分：<code>seconds</code>表示秒，<code>nanos</code>表示纳秒。两者的区别是<code>Instant</code>用于表示一个时间戳（或者说是一个时间点），而<code>Duration</code>表示一个时间段，所以<code>Duration</code>类中不包含<code>now()</code>静态方法。可以通过<code>Duration.between()</code>方法创建<code>Duration</code>对象：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">LocalDateTime from <span style="color:#f92672">=</span> LocalDateTime<span style="color:#f92672">.</span><span style="color:#a6e22e">of</span><span style="color:#f92672">(</span>2017<span style="color:#f92672">,</span> Month<span style="color:#f92672">.</span><span style="color:#a6e22e">JANUARY</span><span style="color:#f92672">,</span> 5<span style="color:#f92672">,</span> 10<span style="color:#f92672">,</span> 7<span style="color:#f92672">,</span> 0<span style="color:#f92672">);</span>    <span style="color:#75715e">// 2017-01-05 10:07:00
+</span><span style="color:#75715e"></span>LocalDateTime to <span style="color:#f92672">=</span> LocalDateTime<span style="color:#f92672">.</span><span style="color:#a6e22e">of</span><span style="color:#f92672">(</span>2017<span style="color:#f92672">,</span> Month<span style="color:#f92672">.</span><span style="color:#a6e22e">FEBRUARY</span><span style="color:#f92672">,</span> 5<span style="color:#f92672">,</span> 10<span style="color:#f92672">,</span> 7<span style="color:#f92672">,</span> 0<span style="color:#f92672">);</span>     <span style="color:#75715e">// 2017-02-05 10:07:00
+</span><span style="color:#75715e"></span>Duration duration <span style="color:#f92672">=</span> Duration<span style="color:#f92672">.</span><span style="color:#a6e22e">between</span><span style="color:#f92672">(</span>from<span style="color:#f92672">,</span> to<span style="color:#f92672">);</span>     <span style="color:#75715e">// 表示从 2017-01-05 10:07:00 到 2017-02-05 10:07:00 这段时间
+</span><span style="color:#75715e"></span>
+<span style="color:#66d9ef">long</span> days <span style="color:#f92672">=</span> duration<span style="color:#f92672">.</span><span style="color:#a6e22e">toDays</span><span style="color:#f92672">();</span>              <span style="color:#75715e">// 这段时间的总天数
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">long</span> hours <span style="color:#f92672">=</span> duration<span style="color:#f92672">.</span><span style="color:#a6e22e">toHours</span><span style="color:#f92672">();</span>            <span style="color:#75715e">// 这段时间的小时数
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">long</span> minutes <span style="color:#f92672">=</span> duration<span style="color:#f92672">.</span><span style="color:#a6e22e">toMinutes</span><span style="color:#f92672">();</span>        <span style="color:#75715e">// 这段时间的分钟数
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">long</span> seconds <span style="color:#f92672">=</span> duration<span style="color:#f92672">.</span><span style="color:#a6e22e">getSeconds</span><span style="color:#f92672">();</span>       <span style="color:#75715e">// 这段时间的秒数
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">long</span> milliSeconds <span style="color:#f92672">=</span> duration<span style="color:#f92672">.</span><span style="color:#a6e22e">toMillis</span><span style="color:#f92672">();</span>    <span style="color:#75715e">// 这段时间的毫秒数
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">long</span> nanoSeconds <span style="color:#f92672">=</span> duration<span style="color:#f92672">.</span><span style="color:#a6e22e">toNanos</span><span style="color:#f92672">();</span>      <span style="color:#75715e">// 这段时间的纳秒数
+</span></code></pre></div><p><code>Duration</code>对象还可以通过<code>of()</code>方法创建，该方法接受一个时间段长度，和一个时间单位作为参数：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Duration duration1 <span style="color:#f92672">=</span> Duration<span style="color:#f92672">.</span><span style="color:#a6e22e">of</span><span style="color:#f92672">(</span>5<span style="color:#f92672">,</span> ChronoUnit<span style="color:#f92672">.</span><span style="color:#a6e22e">DAYS</span><span style="color:#f92672">);</span>       <span style="color:#75715e">// 5天
+</span><span style="color:#75715e"></span>Duration duration2 <span style="color:#f92672">=</span> Duration<span style="color:#f92672">.</span><span style="color:#a6e22e">of</span><span style="color:#f92672">(</span>1000<span style="color:#f92672">,</span> ChronoUnit<span style="color:#f92672">.</span><span style="color:#a6e22e">MILLIS</span><span style="color:#f92672">);</span>  <span style="color:#75715e">// 1000毫秒
+</span></code></pre></div><h2 id="period">Period</h2>
+<p><code>Period</code>在概念上和<code>Duration</code>类似，区别在于<code>Period</code>是以年月日来衡量一个时间段，比如2年3个月6天：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Period period <span style="color:#f92672">=</span> Period<span style="color:#f92672">.</span><span style="color:#a6e22e">of</span><span style="color:#f92672">(</span>2<span style="color:#f92672">,</span> 3<span style="color:#f92672">,</span> 6<span style="color:#f92672">);</span>
+</code></pre></div><p><code>Period</code>对象也可以通过<code>between()</code>方法创建，值得注意的是，由于<code>Period</code>是以年月日衡量时间段，所以between()方法只能接收LocalDate类型的参数：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">// 2017-01-05 到 2017-02-05 这段时间
+</span><span style="color:#75715e"></span>Period period <span style="color:#f92672">=</span> Period<span style="color:#f92672">.</span><span style="color:#a6e22e">between</span><span style="color:#f92672">(</span>
+LocalDate<span style="color:#f92672">.</span><span style="color:#a6e22e">of</span><span style="color:#f92672">(</span>2017<span style="color:#f92672">,</span> 1<span style="color:#f92672">,</span> 5<span style="color:#f92672">),</span>
+LocalDate<span style="color:#f92672">.</span><span style="color:#a6e22e">of</span><span style="color:#f92672">(</span>2017<span style="color:#f92672">,</span> 2<span style="color:#f92672">,</span> 5<span style="color:#f92672">));</span>
+</code></pre></div><h1 id="日期的操作和格式化">日期的操作和格式化</h1>
+<h2 id="增加和减少日期">增加和减少日期</h2>
+<p>Java 8中的日期/时间类都是不可变的，这是为了保证线程安全。当然，新的日期/时间类也提供了方法用于创建对象的可变版本，比如增加一天或者减少一天：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">LocalDate date <span style="color:#f92672">=</span> LocalDate<span style="color:#f92672">.</span><span style="color:#a6e22e">of</span><span style="color:#f92672">(</span>2017<span style="color:#f92672">,</span> 1<span style="color:#f92672">,</span> 5<span style="color:#f92672">);</span>          <span style="color:#75715e">// 2017-01-05
+</span><span style="color:#75715e"></span>
+LocalDate date1 <span style="color:#f92672">=</span> date<span style="color:#f92672">.</span><span style="color:#a6e22e">withYear</span><span style="color:#f92672">(</span>2016<span style="color:#f92672">);</span>              <span style="color:#75715e">// 修改为 2016-01-05
+</span><span style="color:#75715e"></span>LocalDate date2 <span style="color:#f92672">=</span> date<span style="color:#f92672">.</span><span style="color:#a6e22e">withMonth</span><span style="color:#f92672">(</span>2<span style="color:#f92672">);</span>                <span style="color:#75715e">// 修改为 2017-02-05
+</span><span style="color:#75715e"></span>LocalDate date3 <span style="color:#f92672">=</span> date<span style="color:#f92672">.</span><span style="color:#a6e22e">withDayOfMonth</span><span style="color:#f92672">(</span>1<span style="color:#f92672">);</span>           <span style="color:#75715e">// 修改为 2017-01-01
+</span><span style="color:#75715e"></span>
+LocalDate date4 <span style="color:#f92672">=</span> date<span style="color:#f92672">.</span><span style="color:#a6e22e">plusYears</span><span style="color:#f92672">(</span>1<span style="color:#f92672">);</span>                <span style="color:#75715e">// 增加一年 2018-01-05
+</span><span style="color:#75715e"></span>LocalDate date5 <span style="color:#f92672">=</span> date<span style="color:#f92672">.</span><span style="color:#a6e22e">minusMonths</span><span style="color:#f92672">(</span>2<span style="color:#f92672">);</span>              <span style="color:#75715e">// 减少两个月 2016-11-05
+</span><span style="color:#75715e"></span>LocalDate date6 <span style="color:#f92672">=</span> date<span style="color:#f92672">.</span><span style="color:#a6e22e">plus</span><span style="color:#f92672">(</span>5<span style="color:#f92672">,</span> ChronoUnit<span style="color:#f92672">.</span><span style="color:#a6e22e">DAYS</span><span style="color:#f92672">);</span>    <span style="color:#75715e">// 增加5天 2017-01-10
+</span></code></pre></div><p>上面例子中对于日期的操作比较简单，但是有些时候我们要面临更复杂的时间操作，比如将时间调到下一个工作日，或者是下个月的最后一天，这时候我们可以使用<code>with()</code>方法的另一个重载方法，它接收一个<code>TemporalAdjuster</code>参数，可以使我们更加灵活的调整日期：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">LocalDate date7 <span style="color:#f92672">=</span> date<span style="color:#f92672">.</span><span style="color:#a6e22e">with</span><span style="color:#f92672">(</span>nextOrSame<span style="color:#f92672">(</span>DayOfWeek<span style="color:#f92672">.</span><span style="color:#a6e22e">SUNDAY</span><span style="color:#f92672">));</span>      <span style="color:#75715e">// 返回下一个距离当前时间最近的星期日
+</span><span style="color:#75715e"></span>LocalDate date9 <span style="color:#f92672">=</span> date<span style="color:#f92672">.</span><span style="color:#a6e22e">with</span><span style="color:#f92672">(</span>lastInMonth<span style="color:#f92672">(</span>DayOfWeek<span style="color:#f92672">.</span><span style="color:#a6e22e">SATURDAY</span><span style="color:#f92672">));</span>   <span style="color:#75715e">// 返回本月最后一个星期六
+</span></code></pre></div><p>要使上面的代码正确编译，你需要使用静态导入<code>TemporalAdjusters</code>对象：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">import static</span> java.time.temporal.TemporalAdjusters.*<span style="color:#f92672">;</span>
+</code></pre></div><p><code>TemporalAdjusters</code>类中包含了很多静态方法可以直接使用，下面的表格列出了一些方法：</p>
+<table>
+<thead>
+<tr>
+<th>方法名</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>dayOfWeekInMonth</code></td>
+<td>返回同一个月中每周的第几天</td>
+</tr>
+<tr>
+<td><code>firstDayOfMonth</code></td>
+<td>返回当月的第一天</td>
+</tr>
+<tr>
+<td><code>firstDayOfNextMonth</code></td>
+<td>返回下月的第一天</td>
+</tr>
+<tr>
+<td><code>firstDayOfNextYear</code></td>
+<td>返回下一年的第一天</td>
+</tr>
+<tr>
+<td><code>firstDayOfYear</code></td>
+<td>返回本年的第一天</td>
+</tr>
+<tr>
+<td><code>firstInMonth</code></td>
+<td>返回同一个月中第一个星期几</td>
+</tr>
+<tr>
+<td><code>lastDayOfMonth</code></td>
+<td>返回当月的最后一天</td>
+</tr>
+<tr>
+<td><code>lastDayOfNextMonth</code></td>
+<td>返回下月的最后一天</td>
+</tr>
+<tr>
+<td><code>lastDayOfNextYear</code></td>
+<td>返回下一年的最后一天</td>
+</tr>
+<tr>
+<td><code>lastDayOfYear</code></td>
+<td>返回本年的最后一天</td>
+</tr>
+<tr>
+<td><code>lastInMonth</code></td>
+<td>返回同一个月中最后一个星期几</td>
+</tr>
+<tr>
+<td><code>next / previous</code></td>
+<td>返回后一个/前一个给定的星期几</td>
+</tr>
+<tr>
+<td><code>nextOrSame / previousOrSame</code></td>
+<td>返回后一个/前一个给定的星期几，如果这个值满足条件，直接返回</td>
+</tr>
+</tbody>
+</table>
+<p>如果上面表格中列出的方法不能满足你的需求，你还可以创建自定义的<code>TemporalAdjuster</code>接口的实现，<code>TemporalAdjuster</code>也是一个函数式接口，所以我们可以使用Lambda表达式：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@FunctionalInterface</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">TemporalAdjuster</span> <span style="color:#f92672">{</span>
+    Temporal <span style="color:#a6e22e">adjustInto</span><span style="color:#f92672">(</span>Temporal temporal<span style="color:#f92672">);</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>比如给定一个日期，计算该日期的下一个工作日（不包括星期六和星期天）：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">LocalDate date <span style="color:#f92672">=</span> LocalDate<span style="color:#f92672">.</span><span style="color:#a6e22e">of</span><span style="color:#f92672">(</span>2017<span style="color:#f92672">,</span> 1<span style="color:#f92672">,</span> 5<span style="color:#f92672">);</span>
+date<span style="color:#f92672">.</span><span style="color:#a6e22e">with</span><span style="color:#f92672">(</span>temporal <span style="color:#f92672">-&gt;</span> <span style="color:#f92672">{</span>
+    <span style="color:#75715e">// 当前日期
+</span><span style="color:#75715e"></span>    DayOfWeek dayOfWeek <span style="color:#f92672">=</span> DayOfWeek<span style="color:#f92672">.</span><span style="color:#a6e22e">of</span><span style="color:#f92672">(</span>temporal<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">(</span>ChronoField<span style="color:#f92672">.</span><span style="color:#a6e22e">DAY_OF_WEEK</span><span style="color:#f92672">));</span>
+
+    <span style="color:#75715e">// 正常情况下，每次增加一天
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">int</span> dayToAdd <span style="color:#f92672">=</span> 1<span style="color:#f92672">;</span>
+
+    <span style="color:#75715e">// 如果是星期五，增加三天
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>dayOfWeek <span style="color:#f92672">==</span> DayOfWeek<span style="color:#f92672">.</span><span style="color:#a6e22e">FRIDAY</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        dayToAdd <span style="color:#f92672">=</span> 3<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#75715e">// 如果是星期六，增加两天
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>dayOfWeek <span style="color:#f92672">==</span> DayOfWeek<span style="color:#f92672">.</span><span style="color:#a6e22e">SATURDAY</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        dayToAdd <span style="color:#f92672">=</span> 2<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">return</span> temporal<span style="color:#f92672">.</span><span style="color:#a6e22e">plus</span><span style="color:#f92672">(</span>dayToAdd<span style="color:#f92672">,</span> ChronoUnit<span style="color:#f92672">.</span><span style="color:#a6e22e">DAYS</span><span style="color:#f92672">);</span>
+<span style="color:#f92672">});</span>
+</code></pre></div><h2 id="格式化日期">格式化日期</h2>
+<p>新的日期API中提供了一个<code>DateTimeFormatter</code>类用于处理日期格式化操作，它被包含在<code>java.time.format</code>包中，Java 8的日期类有一个<code>format()</code>方法用于将日期格式化为字符串，该方法接收一个<code>DateTimeFormatter</code>类型参数：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">LocalDateTime dateTime <span style="color:#f92672">=</span> LocalDateTime<span style="color:#f92672">.</span><span style="color:#a6e22e">now</span><span style="color:#f92672">();</span>
+String strDate1 <span style="color:#f92672">=</span> dateTime<span style="color:#f92672">.</span><span style="color:#a6e22e">format</span><span style="color:#f92672">(</span>DateTimeFormatter<span style="color:#f92672">.</span><span style="color:#a6e22e">BASIC_ISO_DATE</span><span style="color:#f92672">);</span>    <span style="color:#75715e">// 20170105
+</span><span style="color:#75715e"></span>String strDate2 <span style="color:#f92672">=</span> dateTime<span style="color:#f92672">.</span><span style="color:#a6e22e">format</span><span style="color:#f92672">(</span>DateTimeFormatter<span style="color:#f92672">.</span><span style="color:#a6e22e">ISO_LOCAL_DATE</span><span style="color:#f92672">);</span>    <span style="color:#75715e">// 2017-01-05
+</span><span style="color:#75715e"></span>String strDate3 <span style="color:#f92672">=</span> dateTime<span style="color:#f92672">.</span><span style="color:#a6e22e">format</span><span style="color:#f92672">(</span>DateTimeFormatter<span style="color:#f92672">.</span><span style="color:#a6e22e">ISO_LOCAL_TIME</span><span style="color:#f92672">);</span>    <span style="color:#75715e">// 14:20:16.998
+</span><span style="color:#75715e"></span>String strDate4 <span style="color:#f92672">=</span> dateTime<span style="color:#f92672">.</span><span style="color:#a6e22e">format</span><span style="color:#f92672">(</span>DateTimeFormatter<span style="color:#f92672">.</span><span style="color:#a6e22e">ofPattern</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;yyyy-MM-dd&#34;</span><span style="color:#f92672">));</span>   <span style="color:#75715e">// 2017-01-05
+</span><span style="color:#75715e"></span>String strDate5 <span style="color:#f92672">=</span> dateTime<span style="color:#f92672">.</span><span style="color:#a6e22e">format</span><span style="color:#f92672">(</span>DateTimeFormatter<span style="color:#f92672">.</span><span style="color:#a6e22e">ofPattern</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;今天是：YYYY年 MMMM DD日 E&#34;</span><span style="color:#f92672">,</span> Locale<span style="color:#f92672">.</span><span style="color:#a6e22e">CHINESE</span><span style="color:#f92672">));</span> <span style="color:#75715e">// 今天是：2017年 一月 05日 星期四
+</span></code></pre></div><p>同样，日期类也支持将一个字符串解析成一个日期对象，例如：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">String strDate6 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;2017-01-05&#34;</span><span style="color:#f92672">;</span>
+String strDate7 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;2017-01-05 12:30:05&#34;</span><span style="color:#f92672">;</span>
+
+LocalDate date <span style="color:#f92672">=</span> LocalDate<span style="color:#f92672">.</span><span style="color:#a6e22e">parse</span><span style="color:#f92672">(</span>strDate6<span style="color:#f92672">,</span> DateTimeFormatter<span style="color:#f92672">.</span><span style="color:#a6e22e">ofPattern</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;yyyy-MM-dd&#34;</span><span style="color:#f92672">));</span>
+LocalDateTime dateTime1 <span style="color:#f92672">=</span> LocalDateTime<span style="color:#f92672">.</span><span style="color:#a6e22e">parse</span><span style="color:#f92672">(</span>strDate7<span style="color:#f92672">,</span> DateTimeFormatter<span style="color:#f92672">.</span><span style="color:#a6e22e">ofPattern</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;yyyy-MM-dd HH:mm:ss&#34;</span><span style="color:#f92672">));</span>
+</code></pre></div><h1 id="时区">时区</h1>
+<p>Java 8中的时区操作被很大程度上简化了，新的时区类<code>java.time.ZoneId</code>是原有的<code>java.util.TimeZone</code>类的替代品。<code>ZoneId</code>对象可以通过<code>ZoneId.of()</code>方法创建，也可以通过<code>ZoneId.systemDefault()</code>获取系统默认时区：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">ZoneId shanghaiZoneId <span style="color:#f92672">=</span> ZoneId<span style="color:#f92672">.</span><span style="color:#a6e22e">of</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Asia/Shanghai&#34;</span><span style="color:#f92672">);</span>
+ZoneId systemZoneId <span style="color:#f92672">=</span> ZoneId<span style="color:#f92672">.</span><span style="color:#a6e22e">systemDefault</span><span style="color:#f92672">();</span>
+</code></pre></div><p><code>of()</code>方法接收一个“区域/城市”的字符串作为参数，你可以通过<code>getAvailableZoneIds()</code>方法获取所有合法的“区域/城市”字符串：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Set<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> zoneIds <span style="color:#f92672">=</span> ZoneId<span style="color:#f92672">.</span><span style="color:#a6e22e">getAvailableZoneIds</span><span style="color:#f92672">();</span>
+</code></pre></div><p>对于老的时区类<code>TimeZone</code>，Java 8也提供了转化方法：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">ZoneId oldToNewZoneId <span style="color:#f92672">=</span> TimeZone<span style="color:#f92672">.</span><span style="color:#a6e22e">getDefault</span><span style="color:#f92672">().</span><span style="color:#a6e22e">toZoneId</span><span style="color:#f92672">();</span>
+</code></pre></div><p>有了<code>ZoneId</code>，我们就可以将一个<code>LocalDate</code>、<code>LocalTime</code>或<code>LocalDateTime</code>对象转化为<code>ZonedDateTime</code>对象：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">LocalDateTime localDateTime <span style="color:#f92672">=</span> LocalDateTime<span style="color:#f92672">.</span><span style="color:#a6e22e">now</span><span style="color:#f92672">();</span>
+ZonedDateTime zonedDateTime <span style="color:#f92672">=</span> ZonedDateTime<span style="color:#f92672">.</span><span style="color:#a6e22e">of</span><span style="color:#f92672">(</span>localDateTime<span style="color:#f92672">,</span> shanghaiZoneId<span style="color:#f92672">);</span>
+</code></pre></div><p>将<code>zonedDateTime</code>打印到控制台为：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">2017<span style="color:#f92672">-</span>01<span style="color:#f92672">-</span>05T15<span style="color:#f92672">:</span>26<span style="color:#f92672">:</span>56<span style="color:#f92672">.</span><span style="color:#a6e22e">147</span><span style="color:#f92672">+</span>08<span style="color:#f92672">:</span>00<span style="color:#f92672">[</span>Asia<span style="color:#f92672">/</span>Shanghai<span style="color:#f92672">]</span>
+</code></pre></div><p><code>ZonedDateTime</code>对象由两部分构成，<code>LocalDateTime</code>和<code>ZoneId</code>，其中<code>2017-01-05T15:26:56.147</code>部分为<code>LocalDateTime</code>，<code>+08:00[Asia/Shanghai]</code>部分为<code>ZoneId</code>。</p>
+<p>另一种表示时区的方式是使用<code>ZoneOffset</code>，它是以当前时间和**世界标准时间（UTC）/格林威治时间（GMT）**的偏差来计算，例如：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">ZoneOffset zoneOffset <span style="color:#f92672">=</span> ZoneOffset<span style="color:#f92672">.</span><span style="color:#a6e22e">of</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;+09:00&#34;</span><span style="color:#f92672">);</span>
+LocalDateTime localDateTime <span style="color:#f92672">=</span> LocalDateTime<span style="color:#f92672">.</span><span style="color:#a6e22e">now</span><span style="color:#f92672">();</span>
+OffsetDateTime offsetDateTime <span style="color:#f92672">=</span> OffsetDateTime<span style="color:#f92672">.</span><span style="color:#a6e22e">of</span><span style="color:#f92672">(</span>localDateTime<span style="color:#f92672">,</span> zoneOffset<span style="color:#f92672">);</span>
+</code></pre></div><h1 id="其他历法">其他历法</h1>
+<p>Java中使用的历法是ISO 8601日历系统，它是世界民用历法，也就是我们所说的公历。平年有365天，闰年是366天。闰年的定义是：非世纪年，能被4整除；世纪年能被400整除。为了计算的一致性，公元1年的前一年被当做公元0年，以此类推。</p>
+<p>此外Java 8还提供了4套其他历法（很奇怪为什么没有汉族人使用的农历），每套历法都包含一个日期类，分别是：</p>
+<ul>
+<li><code>ThaiBuddhistDate</code>：泰国佛教历</li>
+<li><code>MinguoDate</code>：中华民国历</li>
+<li><code>JapaneseDate</code>：日本历</li>
+<li><code>HijrahDate</code>：伊斯兰历</li>
+</ul>
+<p>每个日期类都继承<code>ChronoLocalDate</code>类，所以可以在不知道具体历法的情况下也可以操作。不过这些历法一般不常用，除非是有某些特殊需求情况下才会使用。</p>
+<p>这些不同的历法也可以用于向公历转换：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">LocalDate date <span style="color:#f92672">=</span> LocalDate<span style="color:#f92672">.</span><span style="color:#a6e22e">now</span><span style="color:#f92672">();</span>
+JapaneseDate jpDate <span style="color:#f92672">=</span> JapaneseDate<span style="color:#f92672">.</span><span style="color:#a6e22e">from</span><span style="color:#f92672">(</span>date<span style="color:#f92672">);</span>
+</code></pre></div><p>由于它们都继承<code>ChronoLocalDate</code>类，所以在不知道具体历法情况下，可以通过<code>ChronoLocalDate</code>类操作日期：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Chronology jpChronology <span style="color:#f92672">=</span> Chronology<span style="color:#f92672">.</span><span style="color:#a6e22e">ofLocale</span><span style="color:#f92672">(</span>Locale<span style="color:#f92672">.</span><span style="color:#a6e22e">JAPANESE</span><span style="color:#f92672">);</span>
+ChronoLocalDate jpChronoLocalDate <span style="color:#f92672">=</span> jpChronology<span style="color:#f92672">.</span><span style="color:#a6e22e">dateNow</span><span style="color:#f92672">();</span>
+</code></pre></div><p>我们在开发过程中应该尽量避免使用<code>ChronoLocalDate</code>，尽量用与历法无关的方式操作时间，因为不同的历法计算日期的方式不一样，比如开发者会在程序中做一些假设，假设一年中有12个月，如果是中国农历中包含了闰月，一年有可能是13个月，但开发者认为是12个月，多出来的一个月属于明年的。再比如假设年份是累加的，过了一年就在原来的年份上加一，但日本天皇在换代之后需要重新纪年，所以过了一年年份可能会从1开始计算。</p>
+<p>在实际开发过程中建议使用<code>LocalDate</code>，包括存储、操作、业务规则的解读；除非需要将程序的输入或者输出本地化，这时可以使用<code>ChronoLocalDate</code>类。</p>
+</div>
+        <div class="post_footer">
+          
+          <div class="meta">
+            <div class="info">
+              <span class="field tags">
+                <i class="remixicon-stack-line"></i>
+                
+                <a href="https://ffppss.github.io/tags/java/">java</a>
+                
+                <a href="https://ffppss.github.io/tags/%E6%97%A5%E6%9C%9Fapi/">日期API</a>
+                
+                <a href="https://ffppss.github.io/tags/%E6%96%B0%E7%89%B9%E6%80%A7/">新特性</a>
+                
+              </span>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+      
+      
+    </div>
+  </div>
+  <a id="back_to_top" href="#" class="back_to_top"><span>△</span></a>
+</div>
+
+<footer class="footer">
+  <div class="powered_by" style="color: #cccccc;">
+    Proudly published with <a href="http://www.gohugo.io/">Hugo&nbsp;&nbsp;</a>
+    Theme <a href="https://github.com/imzeuk/hugo-theme-zozo themes/zozo">zozo</a>
+  </div>
+
+  
+</footer>
+
+
+
+<script src="https://ffppss.github.io/js/jquery-3.3.1.min.js"></script>
+<script src="https://ffppss.github.io/js/zozo.js"></script>
+<script src="https://ffppss.github.io/js/highlight.pack.js"></script>
+<link  href="https://ffppss.github.io/css/fancybox.min.css" rel="stylesheet">
+<script src="https://ffppss.github.io/js/fancybox.min.js"></script>
+
+<script>hljs.initHighlightingOnLoad()</script>
+
+
+  <script type="text/javascript" async src="https://cdn.bootcss.com/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[\[','\]\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+
+MathJax.Hub.Queue(function() {
+    
+    
+    
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<style>
+code.has-jax {
+    font: inherit;
+    font-size: 100%;
+    background: inherit;
+    border: inherit;
+    color: #515151;
+}
+</style>
+
+
+
+
+
+
+</body>
+</html>

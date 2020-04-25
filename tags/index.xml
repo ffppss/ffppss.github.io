@@ -1,22 +1,121 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Tags on 杂货铺</title>
+    <title>Tags on 无尽光芒</title>
     <link>https://ffppss.github.io/tags/</link>
-    <description>Recent content in Tags on 杂货铺</description>
+    <description>Recent content in Tags on 无尽光芒</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    <lastBuildDate>Thu, 16 Apr 2020 12:03:39 +0800</lastBuildDate>
+    <language>zh-cn</language>
+    <lastBuildDate>Fri, 24 Apr 2020 23:49:40 +0800</lastBuildDate>
     
 	<atom:link href="https://ffppss.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>linux</title>
-      <link>https://ffppss.github.io/tags/linux/</link>
-      <pubDate>Thu, 16 Apr 2020 12:03:39 +0800</pubDate>
+      <title>a</title>
+      <link>https://ffppss.github.io/tags/a/</link>
+      <pubDate>Fri, 24 Apr 2020 23:49:40 +0800</pubDate>
       
-      <guid>https://ffppss.github.io/tags/linux/</guid>
+      <guid>https://ffppss.github.io/tags/a/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>b</title>
+      <link>https://ffppss.github.io/tags/b/</link>
+      <pubDate>Fri, 24 Apr 2020 23:49:40 +0800</pubDate>
+      
+      <guid>https://ffppss.github.io/tags/b/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>c</title>
+      <link>https://ffppss.github.io/tags/c/</link>
+      <pubDate>Fri, 24 Apr 2020 23:49:40 +0800</pubDate>
+      
+      <guid>https://ffppss.github.io/tags/c/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Base64</title>
+      <link>https://ffppss.github.io/tags/base64/</link>
+      <pubDate>Fri, 24 Apr 2020 17:49:40 +0800</pubDate>
+      
+      <guid>https://ffppss.github.io/tags/base64/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>interface</title>
+      <link>https://ffppss.github.io/tags/interface/</link>
+      <pubDate>Fri, 24 Apr 2020 17:49:40 +0800</pubDate>
+      
+      <guid>https://ffppss.github.io/tags/interface/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>java</title>
+      <link>https://ffppss.github.io/tags/java/</link>
+      <pubDate>Fri, 24 Apr 2020 17:49:40 +0800</pubDate>
+      
+      <guid>https://ffppss.github.io/tags/java/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Lambda</title>
+      <link>https://ffppss.github.io/tags/lambda/</link>
+      <pubDate>Fri, 24 Apr 2020 17:49:40 +0800</pubDate>
+      
+      <guid>https://ffppss.github.io/tags/lambda/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Optional</title>
+      <link>https://ffppss.github.io/tags/optional/</link>
+      <pubDate>Fri, 24 Apr 2020 17:49:40 +0800</pubDate>
+      
+      <guid>https://ffppss.github.io/tags/optional/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Stream</title>
+      <link>https://ffppss.github.io/tags/stream/</link>
+      <pubDate>Fri, 24 Apr 2020 17:49:40 +0800</pubDate>
+      
+      <guid>https://ffppss.github.io/tags/stream/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>try</title>
+      <link>https://ffppss.github.io/tags/try/</link>
+      <pubDate>Fri, 24 Apr 2020 17:49:40 +0800</pubDate>
+      
+      <guid>https://ffppss.github.io/tags/try/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>新特性</title>
+      <link>https://ffppss.github.io/tags/%E6%96%B0%E7%89%B9%E6%80%A7/</link>
+      <pubDate>Fri, 24 Apr 2020 17:49:40 +0800</pubDate>
+      
+      <guid>https://ffppss.github.io/tags/%E6%96%B0%E7%89%B9%E6%80%A7/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>日期API</title>
+      <link>https://ffppss.github.io/tags/%E6%97%A5%E6%9C%9Fapi/</link>
+      <pubDate>Fri, 24 Apr 2020 17:49:40 +0800</pubDate>
+      
+      <guid>https://ffppss.github.io/tags/%E6%97%A5%E6%9C%9Fapi/</guid>
       <description></description>
     </item>
     

@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="zh-cn" >
+<head>
+  <meta charset="utf-8"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+  
+  <meta name="author"
+        content="Zeuk"/>
+
+  
+  <meta name="description" content="Java8新增的Stream API与InputStream和OutputStream是完全不同的概念，Stream API是对Java中集合操作的增强，可以利用它进行各种过滤、排序、分组、聚合等操作。S"/>
+  
+
+  
+  
+  <meta name="keywords" content="Hugo, theme, zozo"/>
+  
+
+  
+  <link rel="canonical" href="https://ffppss.github.io/posts/java8%E6%96%B0%E7%89%B9%E6%80%A7%E4%B9%8Bstream-api/"/>
+
+  
+
+  <title>Java 8新特性：Stream API &middot; 无尽光芒</title>
+
+  <link rel="shortcut icon" href="https://ffppss.github.io/images/favicon.ico"/>
+  <link rel="stylesheet" href="https://ffppss.github.io/css/animate.min.css"/>
+  <link rel="stylesheet" href="https://ffppss.github.io/css/remixicon.css"/>
+  <link rel="stylesheet" href="https://ffppss.github.io/css/zozo.css"/>
+  <link rel="stylesheet" href="https://ffppss.github.io/css/highlight.css"/>
+  <link rel="stylesheet" href="https://ffppss.github.io/css/custom.css"/>
+
+  
+  
+
+  <script>
+    (function(d) {
+      var config = {
+        kitId: 'kfn1kkp',
+        scriptTimeout: 3000,
+        async: true
+      },
+      h=d.documentElement,t=setTimeout(function(){h.className=h.className.replace(/\bwf-loading\b/g,"")+" wf-inactive";},config.scriptTimeout),tk=d.createElement("script"),f=false,s=d.getElementsByTagName("script")[0],a;h.className+=" wf-loading";tk.src='https://use.typekit.net/'+config.kitId+'.js';tk.async=true;tk.onload=tk.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete"&&a!="loaded")return;f=true;clearTimeout(t);try{Typekit.load(config)}catch(e){}};s.parentNode.insertBefore(tk,s)
+    })(document);
+  </script>
+</head>
+
+<body>
+<div class="main animated">
+  <div class="nav_container animated fadeInDown">
+  <div class="site_nav" id="site_nav">
+    <ul>
+      
+      <li>
+        <a href="/">首页</a>
+      </li>
+      
+      <li>
+        <a href="/posts/">归档</a>
+      </li>
+      
+      <li>
+        <a href="/tags/">标签</a>
+      </li>
+      
+      <li>
+        <a href="/about/">关于</a>
+      </li>
+      
+    </ul>
+  </div>
+  <div class="menu_icon">
+    <a id="menu_icon"><i class="remixicon-links-line"></i></a>
+  </div>
+</div>
+
+  <div class="header animated fadeInDown">
+  <div class="site_title_container">
+    <div class="site_title">
+      <h1>
+        <a href="https://ffppss.github.io">
+          <span>无尽光芒</span>
+          <img src="https://ffppss.github.io/images/logo.svg"/>
+        </a>
+      </h1>
+    </div>
+    <div class="description">
+      <p class="sub_title">老冯的杂货铺</p>
+      <div class="text_center">
+        <img src="https://ffppss.github.io/images/ball.png" style="width:64px;height:64px;"/>
+      </div>
+      <div class="my_socials">
+        
+        
+        <script>
+        </script>
+        <a href="%20" title="github" target="_blank"><i class="remixicon-github-fill"></i></a>
+        
+        
+        
+        <script>
+        </script>
+        <a href="%20" title="mail" target="_blank"><i class="remixicon-mail-fill"></i></a>
+        
+        
+        
+        <script>
+        </script>
+        <a href="%20" title="qq" target="_blank"><i class="remixicon-qq-fill"></i></a>
+        
+        
+        
+        <script>
+        </script>
+        <a href="%20" title="wechat" target="_blank"><i class="remixicon-wechat-fill"></i></a>
+        
+        
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+  <div class="content">
+    <div class="post_page">
+      <div class="post animated fadeInDown">
+        <div class="post_title post_detail_title">
+          <h2><a href='/posts/java8%E6%96%B0%E7%89%B9%E6%80%A7%E4%B9%8Bstream-api/'>Java 8新特性：Stream API</a></h2>
+          <span class="date">2020.04.24</span>
+        </div>
+        <div class="post_content markdown"><p>Java8新增的Stream API与<code>InputStream</code>和<code>OutputStream</code>是完全不同的概念，Stream API是对Java中集合操作的增强，可以利用它进行各种过滤、排序、分组、聚合等操作。Stream API配合Lambda表达式可以加大的提高代码可读性和编码效率，Stream API也支持并行操作，我们不用再花费很多精力来编写容易出错的多线程代码了，Stream API已经替我们做好了，并且充分利用多核CPU的优势。借助Stream API和Lambda，开发人员可以很容易的编写出高性能的并发处理程序。</p>
+<h1 id="stream-api简介">Stream API简介</h1>
+<p>Stream API是Java 8中加入的一套新的API，主要用于处理集合操作，不过它的处理方式与传统的方式不同，称为“数据流处理”。流（Stream）类似于关系数据库的查询操作，是一种声明式操作。比如要从数据库中获取所有年龄大于20岁的用户的名称，并按照用户的创建时间进行排序，用一条SQL语句就可以搞定，不过使用Java程序实现就会显得有些繁琐，这时候可以使用流：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">List<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> userNames <span style="color:#f92672">=</span>
+        users<span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">()</span>
+        <span style="color:#f92672">.</span><span style="color:#a6e22e">filter</span><span style="color:#f92672">(</span>user <span style="color:#f92672">-&gt;</span> user<span style="color:#f92672">.</span><span style="color:#a6e22e">getAge</span><span style="color:#f92672">()</span> <span style="color:#f92672">&gt;</span> 20<span style="color:#f92672">)</span>
+        <span style="color:#f92672">.</span><span style="color:#a6e22e">sorted</span><span style="color:#f92672">(</span>comparing<span style="color:#f92672">(</span>User<span style="color:#f92672">::</span>getCreationDate<span style="color:#f92672">))</span>
+        <span style="color:#f92672">.</span><span style="color:#a6e22e">map</span><span style="color:#f92672">(</span>User<span style="color:#f92672">::</span>getUserName<span style="color:#f92672">)</span>
+        <span style="color:#f92672">.</span><span style="color:#a6e22e">collect</span><span style="color:#f92672">(</span>toList<span style="color:#f92672">());</span>
+</code></pre></div><p>可以把流跟集合做一个比较。在Java中，集合是一种数据结构，或者说是一种容器，用于存放数据，流不是容器，它不关心数据的存放，只关注如何处理。可以把流当做是Java中的<code>Iterator</code>，不过它比<code>Iterator</code>强大多了。</p>
+<p>流与集合另一个区别在于他们的遍历方式，遍历集合通常使用<code>for-each</code>方式，这种方式称为<strong>外部迭代</strong>，而流使用<strong>内部迭代</strong>方式，也就是说它帮你把迭代的工作做了，你只需要给出一个函数来告诉它接下来要干什么：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">// 外部迭代
+</span><span style="color:#75715e"></span>List<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> list <span style="color:#f92672">=</span> Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">asList</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;A&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;B&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;C&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;D&#34;</span><span style="color:#f92672">);</span>
+<span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span>String str <span style="color:#f92672">:</span> list<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>str<span style="color:#f92672">);</span>
+<span style="color:#f92672">}</span>
+
+<span style="color:#75715e">// 内部迭代
+</span><span style="color:#75715e"></span>list<span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">().</span><span style="color:#a6e22e">forEach</span><span style="color:#f92672">(</span>System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">::</span>println<span style="color:#f92672">);</span>
+</code></pre></div><p>在这个大数据的时代，数据变得越来越多样化，很多时候我们会面对海量数据，并对其做一些复杂的操作（比如统计，分组），依照传统的遍历方式（<code>for-each</code>），每次只能处理集合中的一个元素，并且是按顺序处理，这种方法是极其低效的。你也许会想到并行处理，但是编写多线程代码并非易事，很容易出错并且维护困难。不过在Java 8之后，你可以使用Stream API来解决这一问题。</p>
+<p>Stream API将迭代操作封装到了内部，它会自动的选择最优的迭代方式，并且使用并行方式处理时，将集合分成多段，每一段分别使用不同的线程处理，最后将处理结果合并输出。</p>
+<p>需要注意的是，流只能遍历一次，遍历结束后，这个流就被关闭掉了。如果要重新遍历，可以从数据源（集合）中重新获取一个流。如果你对一个流遍历两次，就会抛出<code>java.lang.IllegalStateException</code>异常：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">List<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> list <span style="color:#f92672">=</span> Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">asList</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;A&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;B&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;C&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;D&#34;</span><span style="color:#f92672">);</span>
+Stream<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> stream <span style="color:#f92672">=</span> list<span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">();</span>
+stream<span style="color:#f92672">.</span><span style="color:#a6e22e">forEach</span><span style="color:#f92672">(</span>System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">::</span>println<span style="color:#f92672">);</span>
+stream<span style="color:#f92672">.</span><span style="color:#a6e22e">forEach</span><span style="color:#f92672">(</span>System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">::</span>println<span style="color:#f92672">);</span> <span style="color:#75715e">// 这里会抛出java.lang.IllegalStateException异常，因为流已经被关闭
+</span></code></pre></div><p>流通常由三部分构成：</p>
+<ol>
+<li>数据源：数据源一般用于流的获取，比如本文开头那个过滤用户的例子中<code>users.stream()</code>方法。</li>
+<li>中间处理：中间处理包括对流中元素的一系列处理，如：过滤（<code>filter()</code>），映射（<code>map()</code>），排序（<code>sorted()</code>）。</li>
+<li>终端处理：终端处理会生成结果，结果可以是任何不是流值，如<code>List</code>；也可以不返回结果，如<code>stream.forEach(System.out::println)</code>就是将结果打印到控制台中，并没有返回。</li>
+</ol>
+<h1 id="创建流">创建流</h1>
+<p>创建流的方式有很多，具体可以划分为以下几种：</p>
+<h2 id="由值创建流">由值创建流</h2>
+<p>使用静态方法<code>Stream.of()</code>创建流，该方法接收一个变长参数：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Stream<span style="color:#f92672">&lt;</span>Stream<span style="color:#f92672">&gt;</span> stream <span style="color:#f92672">=</span> Stream<span style="color:#f92672">.</span><span style="color:#a6e22e">of</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;A&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;B&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;C&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;D&#34;</span><span style="color:#f92672">);</span>
+</code></pre></div><p>也可以使用静态方法<code>Stream.empty()</code>创建一个空的流：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Stream<span style="color:#f92672">&lt;</span>Stream<span style="color:#f92672">&gt;</span> stream <span style="color:#f92672">=</span> Stream<span style="color:#f92672">.</span><span style="color:#a6e22e">empty</span><span style="color:#f92672">();</span>
+</code></pre></div><h2 id="由数组创建流">由数组创建流</h2>
+<p>使用静态方法<code>Arrays.stream()</code>从数组创建一个流，该方法接收一个数组参数：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">String<span style="color:#f92672">[]</span> strs <span style="color:#f92672">=</span> <span style="color:#f92672">{</span><span style="color:#e6db74">&#34;A&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;B&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;C&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;D&#34;</span><span style="color:#f92672">};</span>
+Stream<span style="color:#f92672">&lt;</span>Stream<span style="color:#f92672">&gt;</span> stream <span style="color:#f92672">=</span> Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">(</span>strs<span style="color:#f92672">);</span>
+</code></pre></div><h2 id="通过文件生成流">通过文件生成流</h2>
+<p>使用<code>java.nio.file.Files</code>类中的很多静态方法都可以获取流，比如<code>Files.lines()</code>方法，该方法接收一个<code>java.nio.file.Path</code>对象，返回一个由文件行构成的字符串流：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Stream<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> stream <span style="color:#f92672">=</span> Files<span style="color:#f92672">.</span><span style="color:#a6e22e">lines</span><span style="color:#f92672">(</span>Paths<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;text.txt&#34;</span><span style="color:#f92672">),</span> Charset<span style="color:#f92672">.</span><span style="color:#a6e22e">defaultCharset</span><span style="color:#f92672">());</span>
+</code></pre></div><h2 id="通过函数创建流">通过函数创建流</h2>
+<p><code>java.util.stream.Stream</code>中有两个静态方法用于从函数生成流，他们分别是<code>Stream.generate()</code>和<code>Stream.iterate()</code>：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">// iteartor
+</span><span style="color:#75715e"></span>Stream<span style="color:#f92672">.</span><span style="color:#a6e22e">iterate</span><span style="color:#f92672">(</span>0<span style="color:#f92672">,</span> n <span style="color:#f92672">-&gt;</span> n <span style="color:#f92672">+</span> 2<span style="color:#f92672">).</span><span style="color:#a6e22e">limit</span><span style="color:#f92672">(</span>51<span style="color:#f92672">).</span><span style="color:#a6e22e">forEach</span><span style="color:#f92672">(</span>System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">::</span>println<span style="color:#f92672">);</span>
+
+<span style="color:#75715e">// generate
+</span><span style="color:#75715e"></span>Stream<span style="color:#f92672">.</span><span style="color:#a6e22e">generate</span><span style="color:#f92672">(()</span> <span style="color:#f92672">-&gt;</span> <span style="color:#e6db74">&#34;Hello Man!&#34;</span><span style="color:#f92672">).</span><span style="color:#a6e22e">limit</span><span style="color:#f92672">(</span>10<span style="color:#f92672">).</span><span style="color:#a6e22e">forEach</span><span style="color:#f92672">(</span>System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">::</span>println<span style="color:#f92672">);</span>
+</code></pre></div><p>第一个方法会打印100以内的所有偶数，第二个方法打印10个<code>Hello Man!</code>。值得注意的是，这两个方法生成的流都是无限流，没有固定大小，可以无穷的计算下去，在上面的代码中我们使用了<code>limit()</code>来避免打印无穷个值。</p>
+<p>一般来说，<code>iterate()</code>用于生成一系列值，比如生成以当前时间开始之后的10天的日期：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Stream<span style="color:#f92672">.</span><span style="color:#a6e22e">iterate</span><span style="color:#f92672">(</span>LocalDate<span style="color:#f92672">.</span><span style="color:#a6e22e">now</span><span style="color:#f92672">(),</span> date <span style="color:#f92672">-&gt;</span> date<span style="color:#f92672">.</span><span style="color:#a6e22e">plusDays</span><span style="color:#f92672">(</span>1<span style="color:#f92672">)).</span><span style="color:#a6e22e">limit</span><span style="color:#f92672">(</span>10<span style="color:#f92672">).</span><span style="color:#a6e22e">forEach</span><span style="color:#f92672">(</span>System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">::</span>println<span style="color:#f92672">);</span>
+</code></pre></div><p><code>generate()</code>方法用于生成一些随机数，比如生成10个UUID：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Stream<span style="color:#f92672">.</span><span style="color:#a6e22e">generate</span><span style="color:#f92672">(()</span> <span style="color:#f92672">-&gt;</span> UUID<span style="color:#f92672">.</span><span style="color:#a6e22e">randomUUID</span><span style="color:#f92672">().</span><span style="color:#a6e22e">toString</span><span style="color:#f92672">()).</span><span style="color:#a6e22e">limit</span><span style="color:#f92672">(</span>10<span style="color:#f92672">).</span><span style="color:#a6e22e">forEach</span><span style="color:#f92672">(</span>System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">::</span>println<span style="color:#f92672">);</span>
+</code></pre></div><h1 id="使用流">使用流</h1>
+<p><code>Stream</code>接口中包含许多对流操作的方法，这些方法分别为：</p>
+<ul>
+<li><code>filter()</code>：对流的元素过滤</li>
+<li><code>map()</code>：将流的元素映射成另一个类型</li>
+<li><code>distinct()</code>：去除流中重复的元素</li>
+<li><code>sorted()</code>：对流的元素排序</li>
+<li><code>forEach()</code>：对流中的每个元素执行某个操作</li>
+<li><code>peek()</code>：与<code>forEach()</code>方法效果类似，不同的是，该方法会返回一个新的流，而<code>forEach()</code>无返回</li>
+<li><code>limit()</code>：截取流中前面几个元素</li>
+<li><code>skip()</code>：跳过流中前面几个元素</li>
+<li><code>toArray()</code>：将流转换为数组</li>
+<li><code>reduce()</code>：对流中的元素归约操作，将每个元素合起来形成一个新的值</li>
+<li><code>collect()</code>：对流的汇总操作，比如输出成<code>List</code>集合</li>
+<li><code>anyMatch()</code>：匹配流中的元素，类似的操作还有<code>allMatch()</code>和<code>noneMatch()</code>方法</li>
+<li><code>findFirst()</code>：查找第一个元素，类似的还有<code>findAny()</code>方法</li>
+<li><code>max()</code>：求最大值</li>
+<li><code>min()</code>：求最小值</li>
+<li><code>count()</code>：求总数</li>
+</ul>
+<p>下面逐一介绍这些方法的用法。</p>
+<h2 id="过滤和排序">过滤和排序</h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Stream<span style="color:#f92672">.</span><span style="color:#a6e22e">of</span><span style="color:#f92672">(</span>1<span style="color:#f92672">,</span> 8<span style="color:#f92672">,</span> 5<span style="color:#f92672">,</span> 2<span style="color:#f92672">,</span> 1<span style="color:#f92672">,</span> 0<span style="color:#f92672">,</span> 9<span style="color:#f92672">,</span> 2<span style="color:#f92672">,</span> 0<span style="color:#f92672">,</span> 4<span style="color:#f92672">,</span> 8<span style="color:#f92672">)</span>
+    <span style="color:#f92672">.</span><span style="color:#a6e22e">filter</span><span style="color:#f92672">(</span>n <span style="color:#f92672">-&gt;</span> n <span style="color:#f92672">&gt;</span> 2<span style="color:#f92672">)</span>     <span style="color:#75715e">// 对元素过滤，保留大于2的元素
+</span><span style="color:#75715e"></span>    <span style="color:#f92672">.</span><span style="color:#a6e22e">distinct</span><span style="color:#f92672">()</span>             <span style="color:#75715e">// 去重，类似于SQL语句中的DISTINCT
+</span><span style="color:#75715e"></span>    <span style="color:#f92672">.</span><span style="color:#a6e22e">skip</span><span style="color:#f92672">(</span>1<span style="color:#f92672">)</span>                <span style="color:#75715e">// 跳过前面1个元素
+</span><span style="color:#75715e"></span>    <span style="color:#f92672">.</span><span style="color:#a6e22e">limit</span><span style="color:#f92672">(</span>2<span style="color:#f92672">)</span>               <span style="color:#75715e">// 返回开头2个元素，类似于SQL语句中的SELECT TOP
+</span><span style="color:#75715e"></span>    <span style="color:#f92672">.</span><span style="color:#a6e22e">sorted</span><span style="color:#f92672">()</span>               <span style="color:#75715e">// 对结果排序
+</span><span style="color:#75715e"></span>    <span style="color:#f92672">.</span><span style="color:#a6e22e">forEach</span><span style="color:#f92672">(</span>System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">::</span>println<span style="color:#f92672">);</span>
+</code></pre></div><h2 id="查找和匹配">查找和匹配</h2>
+<p>Stream中提供的查找方法有<code>anyMatch()</code>、<code>allMatch()</code>、<code>noneMatch()</code>、<code>findFirst()</code>、<code>findAny()</code>，这些方法被用来查找或匹配某些元素是否符合给定的条件：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">// 检查流中的任意元素是否包含字符串&#34;Java&#34;
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">boolean</span> hasMatch <span style="color:#f92672">=</span> Stream<span style="color:#f92672">.</span><span style="color:#a6e22e">of</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Java&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;C#&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;PHP&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;C++&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;Python&#34;</span><span style="color:#f92672">)</span>
+        <span style="color:#f92672">.</span><span style="color:#a6e22e">anyMatch</span><span style="color:#f92672">(</span>s <span style="color:#f92672">-&gt;</span> s<span style="color:#f92672">.</span><span style="color:#a6e22e">equals</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Java&#34;</span><span style="color:#f92672">));</span>
+
+<span style="color:#75715e">// 检查流中的所有元素是否都包含字符串&#34;#&#34;
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">boolean</span> hasAllMatch <span style="color:#f92672">=</span> Stream<span style="color:#f92672">.</span><span style="color:#a6e22e">of</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Java&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;C#&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;PHP&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;C++&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;Python&#34;</span><span style="color:#f92672">)</span>
+        <span style="color:#f92672">.</span><span style="color:#a6e22e">allMatch</span><span style="color:#f92672">(</span>s <span style="color:#f92672">-&gt;</span> s<span style="color:#f92672">.</span><span style="color:#a6e22e">contains</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;#&#34;</span><span style="color:#f92672">));</span>
+
+<span style="color:#75715e">// 检查流中的任意元素是否没有以&#34;C&#34;开头的字符串
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">boolean</span> hasNoneMatch <span style="color:#f92672">=</span> Stream<span style="color:#f92672">.</span><span style="color:#a6e22e">of</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Java&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;C#&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;PHP&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;C++&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;Python&#34;</span><span style="color:#f92672">)</span>
+        <span style="color:#f92672">.</span><span style="color:#a6e22e">noneMatch</span><span style="color:#f92672">(</span>s <span style="color:#f92672">-&gt;</span> s<span style="color:#f92672">.</span><span style="color:#a6e22e">startsWith</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;C&#34;</span><span style="color:#f92672">));</span>
+
+<span style="color:#75715e">// 查找元素
+</span><span style="color:#75715e"></span>Optional<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> element <span style="color:#f92672">=</span> Stream<span style="color:#f92672">.</span><span style="color:#a6e22e">of</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Java&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;C#&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;PHP&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;C++&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;Python&#34;</span><span style="color:#f92672">)</span>
+        <span style="color:#f92672">.</span><span style="color:#a6e22e">filter</span><span style="color:#f92672">(</span>s <span style="color:#f92672">-&gt;</span> s<span style="color:#f92672">.</span><span style="color:#a6e22e">contains</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;C&#34;</span><span style="color:#f92672">))</span>
+        <span style="color:#75715e">// .findFirst()     // 查找第一个元素
+</span><span style="color:#75715e"></span>        <span style="color:#f92672">.</span><span style="color:#a6e22e">findAny</span><span style="color:#f92672">();</span>         <span style="color:#75715e">// 查找任意元素
+</span></code></pre></div><p>注意最后一行代码的返回类型，是一个<code>Optional</code>类（<code>java.util.Optional</code>），它一个容器类，代表一个值存在或不存在。上面的代码中，<code>findAny()</code>可能什么元素都没找到。Java 8的库设计人员引入了<code>Optional</code>，这样就不用返回众所周知容易出问题的null了。有关<code>Optional</code>类的详细用法，将在下一篇文章中介绍。</p>
+<p>实际上测试结果发现，<code>findFirst()</code>和<code>findAny()</code>返回的都是第一个元素，那么两者之间到底有什么区别？通过查看javadoc描述，大致意思是<code>findAny()</code>是为了提高并行操作时的性能，如果没有特别需要，还是建议使用<code>findAny()</code>方法。</p>
+<h2 id="归约">归约</h2>
+<p>归约操作就是将流中的元素进行合并，形成一个新的值，常见的归约操作包括求和，求最大值或最小值。归约操作一般使用<code>reduce()</code>方法，与<code>map()</code>方法搭配使用，可以处理一些很复杂的归约操作。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">// 获取流
+</span><span style="color:#75715e"></span>List<span style="color:#f92672">&lt;</span>Book<span style="color:#f92672">&gt;</span> books <span style="color:#f92672">=</span> Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">asList</span><span style="color:#f92672">(</span>
+       <span style="color:#66d9ef">new</span> Book<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Java编程思想&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;Bruce Eckel&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;机械工业出版社&#34;</span><span style="color:#f92672">,</span> 108<span style="color:#f92672">.</span><span style="color:#a6e22e">00D</span><span style="color:#f92672">),</span>
+       <span style="color:#66d9ef">new</span> Book<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Java 8实战&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;Mario Fusco&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;人民邮电出版社&#34;</span><span style="color:#f92672">,</span> 79<span style="color:#f92672">.</span><span style="color:#a6e22e">00D</span><span style="color:#f92672">),</span>
+       <span style="color:#66d9ef">new</span> Book<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;MongoDB权威指南（第2版）&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;Kristina Chodorow&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;人民邮电出版社&#34;</span><span style="color:#f92672">,</span> 69<span style="color:#f92672">.</span><span style="color:#a6e22e">00D</span><span style="color:#f92672">)</span>
+<span style="color:#f92672">);</span>
+
+<span style="color:#75715e">// 计算所有图书的总价
+</span><span style="color:#75715e"></span>Optional<span style="color:#f92672">&lt;</span>Double<span style="color:#f92672">&gt;</span> totalPrice <span style="color:#f92672">=</span> books<span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">()</span>
+       <span style="color:#f92672">.</span><span style="color:#a6e22e">map</span><span style="color:#f92672">(</span>Book<span style="color:#f92672">::</span>getPrice<span style="color:#f92672">)</span>
+       <span style="color:#f92672">.</span><span style="color:#a6e22e">reduce</span><span style="color:#f92672">((</span>n<span style="color:#f92672">,</span> m<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> n <span style="color:#f92672">+</span> m<span style="color:#f92672">);</span>
+
+<span style="color:#75715e">// 价格最高的图书
+</span><span style="color:#75715e"></span>Optional<span style="color:#f92672">&lt;</span>Book<span style="color:#f92672">&gt;</span> expensive <span style="color:#f92672">=</span> books<span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">().</span><span style="color:#a6e22e">max</span><span style="color:#f92672">(</span>Comparator<span style="color:#f92672">.</span><span style="color:#a6e22e">comparing</span><span style="color:#f92672">(</span>Book<span style="color:#f92672">::</span>getPrice<span style="color:#f92672">));</span>
+<span style="color:#75715e">// 价格最低的图书
+</span><span style="color:#75715e"></span>Optional<span style="color:#f92672">&lt;</span>Book<span style="color:#f92672">&gt;</span> cheapest <span style="color:#f92672">=</span> books<span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">().</span><span style="color:#a6e22e">min</span><span style="color:#f92672">(</span>Comparator<span style="color:#f92672">.</span><span style="color:#a6e22e">comparing</span><span style="color:#f92672">(</span>Book<span style="color:#f92672">::</span>getPrice<span style="color:#f92672">));</span>
+<span style="color:#75715e">// 计算总数
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">long</span> count <span style="color:#f92672">=</span> books<span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">().</span><span style="color:#a6e22e">count</span><span style="color:#f92672">()</span>
+</code></pre></div><p>在计算图书总价的时候首先使用<code>map()</code>方法得到所有图书价格的流，然后再使用<code>reduce()</code>方法进行归约计算。与<code>map()</code>方法类似的还有一个<code>flatMap()</code>，<code>flatMap()</code>方法让你把一个流中的每个值都换成另一个流，然后把所有的流连接起来成为一个新的流。看看下面的代码：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">List<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">[]&gt;</span> result <span style="color:#f92672">=</span> Stream<span style="color:#f92672">.</span><span style="color:#a6e22e">of</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Hello Man&#34;</span><span style="color:#f92672">)</span>
+        <span style="color:#f92672">.</span><span style="color:#a6e22e">map</span><span style="color:#f92672">(</span>s <span style="color:#f92672">-&gt;</span> s<span style="color:#f92672">.</span><span style="color:#a6e22e">split</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">))</span>
+        <span style="color:#f92672">.</span><span style="color:#a6e22e">collect</span><span style="color:#f92672">(</span>Collectors<span style="color:#f92672">.</span><span style="color:#a6e22e">toList</span><span style="color:#f92672">());</span>
+</code></pre></div><p>上面代码返回的结果是一个<code>List</code>类型，也就是<code>[[&quot;H&quot;, &quot;e&quot;, &quot;l&quot;, &quot;l&quot;, &quot;o&quot;], [&quot;M&quot;, &quot;a&quot;, &quot;n&quot;]]</code>这种结构，而我们想要的到<code>[&quot;H&quot;, &quot;e&quot;, &quot;l&quot;, &quot;l&quot;, &quot;o&quot;, &quot;M&quot;, &quot;a&quot;, &quot;n&quot;]</code>这种结构，这时候就需要使用<code>flatMap()</code>方法了：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">List<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> result <span style="color:#f92672">=</span> Stream<span style="color:#f92672">.</span><span style="color:#a6e22e">of</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Hello Man&#34;</span><span style="color:#f92672">)</span>
+        <span style="color:#f92672">.</span><span style="color:#a6e22e">map</span><span style="color:#f92672">(</span>s <span style="color:#f92672">-&gt;</span> s<span style="color:#f92672">.</span><span style="color:#a6e22e">split</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">))</span>
+        <span style="color:#f92672">.</span><span style="color:#a6e22e">flatMap</span><span style="color:#f92672">(</span>Arrays<span style="color:#f92672">::</span>stream<span style="color:#f92672">)</span>
+        <span style="color:#f92672">.</span><span style="color:#a6e22e">collect</span><span style="color:#f92672">(</span>Collectors<span style="color:#f92672">.</span><span style="color:#a6e22e">toList</span><span style="color:#f92672">());</span>
+</code></pre></div><p>使用<code>flatMap()</code>方法的效果是，各个数组并不是分别映射成一个流，而是映射成流的内容。所有使用<code>map(Arrays::stream)</code>时生成的单个流都被合并起来，也就是对流扁平化操作。</p>
+<h1 id="数据收集">数据收集</h1>
+<p>前面两部分内容分别为流式数据处理的前两个步骤：从数据源创建流、使用流进行中间处理。下面我们介绍流式数据处理的最后一个步骤——数据收集。</p>
+<p>数据收集是流式数据处理的终端处理，与中间处理不同的是，终端处理会消耗流，也就是说，终端处理之后，这个流就会被关闭，如果再进行中间处理，就会抛出异常。数据收集主要使用<code>collect</code>方法，该方法也属于归约操作，像<code>reduce()</code>方法那样可以接收各种做法作为参数，将流中的元素累积成一个汇总结果，具体的做法是通过定义新的<code>Collector</code>接口来定义的。</p>
+<p>在前面部分的例子中使用收集器（<code>Collector</code>）是由<code>java.util.stream.Collectors</code>工具类中的<code>toList()</code>方法提供，<code>Collectors</code>类提供了许多常用的方法用于处理数据收集，常见的有归约、汇总、分组等。</p>
+<h2 id="归约和汇总">归约和汇总</h2>
+<p>我们使用前面归约操作中计算图书总价，最大值，最小值，输入总数那个例子来看看收集器如何进行上述归约操作：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">// 求和
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">long</span> count <span style="color:#f92672">=</span> books<span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">().</span><span style="color:#a6e22e">collect</span><span style="color:#f92672">(</span>counting<span style="color:#f92672">());</span>
+
+<span style="color:#75715e">// 价格最高的图书
+</span><span style="color:#75715e"></span>Optional<span style="color:#f92672">&lt;</span>Book<span style="color:#f92672">&gt;</span> expensive <span style="color:#f92672">=</span> books<span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">().</span><span style="color:#a6e22e">collect</span><span style="color:#f92672">(</span>maxBy<span style="color:#f92672">(</span>comparing<span style="color:#f92672">(</span>Book<span style="color:#f92672">::</span>getPrice<span style="color:#f92672">)));</span>
+
+<span style="color:#75715e">// 价格最低的图书
+</span><span style="color:#75715e"></span>Optional<span style="color:#f92672">&lt;</span>Book<span style="color:#f92672">&gt;</span> cheapest <span style="color:#f92672">=</span> books<span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">().</span><span style="color:#a6e22e">collect</span><span style="color:#f92672">(</span>minBy<span style="color:#f92672">(</span>comparing<span style="color:#f92672">(</span>Book<span style="color:#f92672">::</span>getPrice<span style="color:#f92672">)));</span>
+</code></pre></div><p>上面的代码假设你已经使用静态导入了<code>Collectors</code>和<code>Comparator</code>两个类，这样你就不用再去写<code>Collectors.counting()</code>和<code>Comparator.comparing()</code>这样的代码了：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">import static</span> java.util.stream.Collectors.*<span style="color:#f92672">;</span>
+<span style="color:#f92672">import static</span> java.util.Comparator.*<span style="color:#f92672">;</span>
+</code></pre></div><p><code>Collectors</code>工具类为我们提供了用于汇总的方法，包括<code>summarizingInt()</code>，<code>summarizingLong()</code>和<code>summarizingDouble()</code>，由于图书的价格为<code>Double</code>类型，所以我们使用<code>summarizingDouble()</code>方法进行汇总。该方法会返回一个<code>DoubleSummaryStatistics</code>对象，包含一系列归约操作的方法，如：汇总、计算平均数、最大值、最小值、计算总数：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">DoubleSummaryStatistics dss <span style="color:#f92672">=</span> books<span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">().</span><span style="color:#a6e22e">collect</span><span style="color:#f92672">(</span>summarizingDouble<span style="color:#f92672">(</span>Book<span style="color:#f92672">::</span>getPrice<span style="color:#f92672">));</span>
+<span style="color:#66d9ef">double</span> sum <span style="color:#f92672">=</span> dss<span style="color:#f92672">.</span><span style="color:#a6e22e">getSum</span><span style="color:#f92672">();</span>          <span style="color:#75715e">// 汇总
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">double</span> average <span style="color:#f92672">=</span> dss<span style="color:#f92672">.</span><span style="color:#a6e22e">getAverage</span><span style="color:#f92672">();</span>  <span style="color:#75715e">// 求平均数
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">long</span> count <span style="color:#f92672">=</span> dss<span style="color:#f92672">.</span><span style="color:#a6e22e">getCount</span><span style="color:#f92672">();</span>        <span style="color:#75715e">// 计算总数
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">double</span> max <span style="color:#f92672">=</span> dss<span style="color:#f92672">.</span><span style="color:#a6e22e">getMax</span><span style="color:#f92672">();</span>          <span style="color:#75715e">// 最大值
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">double</span> min <span style="color:#f92672">=</span> dss<span style="color:#f92672">.</span><span style="color:#a6e22e">getMin</span><span style="color:#f92672">();</span>          <span style="color:#75715e">// 最小值
+</span></code></pre></div><p><code>Collectors</code>类还包含一个<code>joining()</code>方法，该方法用于连接字符串：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">String str <span style="color:#f92672">=</span> Stream<span style="color:#f92672">.</span><span style="color:#a6e22e">of</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;A&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;B&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;C&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;D&#34;</span><span style="color:#f92672">).</span><span style="color:#a6e22e">collect</span><span style="color:#f92672">(</span>joining<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;,&#34;</span><span style="color:#f92672">));</span>
+</code></pre></div><p>上面的代码用于将流中的字符串通过逗号连接成一个新的字符串。</p>
+<h2 id="分组">分组</h2>
+<p>和关系数据库一样，流也提供了类似于数据库中<code>GROUP BY</code>分组的特性，由<code>Collectors.groupingBy()</code>方法提供：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Map<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> List<span style="color:#f92672">&lt;</span>Book<span style="color:#f92672">&gt;&gt;</span> booksGroup <span style="color:#f92672">=</span> books<span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">().</span><span style="color:#a6e22e">collect</span><span style="color:#f92672">(</span>groupingBy<span style="color:#f92672">(</span>Book<span style="color:#f92672">::</span>getPublisher<span style="color:#f92672">));</span>
+</code></pre></div><p>上面的代码按照出版社对图书进行分组，分组的结果是一个<code>Map</code>对象，<code>Map</code>的<code>key</code>值是出版社的名称，<code>value</code>值是每个出版社分组对应的集合。分组方法<code>groupingBy()</code>接收一个<code>Function</code>接口作为参数，上面的例子中我们使用了方法引用传递了出版社作为分组的依据，但实际情况可能比这复杂，比如将价格在0-50之间的书籍分成一组，50-100之间的分成一组，超过100的分成一组，这时候，我们可以直接使用Lambda表达式来表示这个分组逻辑：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Map<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> List<span style="color:#f92672">&lt;</span>Book<span style="color:#f92672">&gt;&gt;</span> booksGroup <span style="color:#f92672">=</span> books
+    <span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">()</span>
+    <span style="color:#f92672">.</span><span style="color:#a6e22e">collect</span><span style="color:#f92672">(</span>groupingBy<span style="color:#f92672">(</span>book <span style="color:#f92672">-&gt;</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>book<span style="color:#f92672">.</span><span style="color:#a6e22e">getPrice</span><span style="color:#f92672">()</span> <span style="color:#f92672">&gt;</span> 0 <span style="color:#f92672">&amp;&amp;</span> book<span style="color:#f92672">.</span><span style="color:#a6e22e">getPrice</span><span style="color:#f92672">()</span> <span style="color:#f92672">&lt;=</span> 50<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;A&#34;</span><span style="color:#f92672">;</span>
+        <span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>book<span style="color:#f92672">.</span><span style="color:#a6e22e">getPrice</span><span style="color:#f92672">()</span> <span style="color:#f92672">&gt;</span> 50 <span style="color:#f92672">&amp;&amp;</span> book<span style="color:#f92672">.</span><span style="color:#a6e22e">getPrice</span><span style="color:#f92672">()</span> <span style="color:#f92672">&lt;=</span>100<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;B&#34;</span><span style="color:#f92672">;</span>
+        <span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#f92672">{</span>
+            <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;C&#34;</span><span style="color:#f92672">;</span>
+        <span style="color:#f92672">}</span>
+    <span style="color:#f92672">}));</span>
+</code></pre></div><p><code>groupingBy()</code>方法还支持多级分组，他有一个重载方法，除了接收一个<code>Function</code>类型的参数外，还接收一个<code>Collector</code>类型的参数：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Map<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> Map<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> List<span style="color:#f92672">&lt;</span>Book<span style="color:#f92672">&gt;&gt;&gt;</span> booksGroup <span style="color:#f92672">=</span> books<span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">().</span><span style="color:#a6e22e">collect</span><span style="color:#f92672">(</span>
+        groupingBy<span style="color:#f92672">(</span>Book<span style="color:#f92672">::</span>getPublisher<span style="color:#f92672">,</span> groupingBy<span style="color:#f92672">(</span>book <span style="color:#f92672">-&gt;</span> <span style="color:#f92672">{</span>
+            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>book<span style="color:#f92672">.</span><span style="color:#a6e22e">getPrice</span><span style="color:#f92672">()</span> <span style="color:#f92672">&gt;</span> 0 <span style="color:#f92672">&amp;&amp;</span> book<span style="color:#f92672">.</span><span style="color:#a6e22e">getPrice</span><span style="color:#f92672">()</span> <span style="color:#f92672">&lt;=</span> 50<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+                <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;A&#34;</span><span style="color:#f92672">;</span>
+            <span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>book<span style="color:#f92672">.</span><span style="color:#a6e22e">getPrice</span><span style="color:#f92672">()</span> <span style="color:#f92672">&gt;</span> 50 <span style="color:#f92672">&amp;&amp;</span> book<span style="color:#f92672">.</span><span style="color:#a6e22e">getPrice</span><span style="color:#f92672">()</span> <span style="color:#f92672">&lt;=</span>100<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+                <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;B&#34;</span><span style="color:#f92672">;</span>
+            <span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#f92672">{</span>
+                <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;C&#34;</span><span style="color:#f92672">;</span>
+            <span style="color:#f92672">}</span>
+        <span style="color:#f92672">}))</span>
+<span style="color:#f92672">);</span>
+</code></pre></div><p>上面的代码将之前两个分组合并成一个，实现了多级分组，首先按照出版社进行分组，然后按照价格进行分组，返回类型是一个<code>Map&gt;&gt;</code>。<code>groupingBy()</code>的第二个参数可以是任意类型，只要是<code>Collector</code>接口的实例就可以，比如先分组，再统计数量：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Map<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> Long<span style="color:#f92672">&gt;</span> countGroup <span style="color:#f92672">=</span> books<span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">()</span>
+        <span style="color:#f92672">.</span><span style="color:#a6e22e">collect</span><span style="color:#f92672">(</span>groupingBy<span style="color:#f92672">(</span>Book<span style="color:#f92672">::</span>getPublisher<span style="color:#f92672">,</span> counting<span style="color:#f92672">()));</span>
+</code></pre></div><p>还可以在进行分组后获取每组中价格最高的图书：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Map<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> Book<span style="color:#f92672">&gt;</span> expensiveGroup <span style="color:#f92672">=</span> books<span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">()</span>
+        <span style="color:#f92672">.</span><span style="color:#a6e22e">collect</span><span style="color:#f92672">(</span>groupingBy<span style="color:#f92672">(</span>Book<span style="color:#f92672">::</span>getPublisher<span style="color:#f92672">,</span> collectingAndThen<span style="color:#f92672">(</span>
+            maxBy<span style="color:#f92672">(</span>comparingDouble<span style="color:#f92672">(</span>Book<span style="color:#f92672">::</span>getPrice<span style="color:#f92672">)),</span>
+                Optional<span style="color:#f92672">::</span>get
+        <span style="color:#f92672">)));</span>
+</code></pre></div><h1 id="并行数据处理">并行数据处理</h1>
+<p>在Java 7之前，处理并行数据集合非常麻烦，首先需要将一个庞大数据集合分成几个子集合；然后需要为每一个子集合编写多线程处理程序，还需要对他们做线程同步来避免访问共享变量导致处理结果不准确；最后，等待所有线程处理完毕后将处理结果合并。在Java 7之后新添加了一个<code>fork/join</code>的框架，让这一切变得更加简单。</p>
+<h2 id="并行流">并行流</h2>
+<p>并行流使用集合的<code>parallelStream()</code>方法可以获取一个并行流。Java内部会将流的内容分割成若干个子部分，然后将它们交给多个线程并行处理，这样就将工作的负担交给多核CPU的其他内核处理。</p>
+<p>我们通过一个简单粗暴的例子演示并行流的处理性能。假设有一个方法，接受一个数字n作为参数，返回从1到n的所有自然数之和：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">long</span> <span style="color:#a6e22e">sequentialSum</span><span style="color:#f92672">(</span><span style="color:#66d9ef">long</span> n<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+	<span style="color:#66d9ef">return</span> Stream<span style="color:#f92672">.</span><span style="color:#a6e22e">iterate</span><span style="color:#f92672">(</span>1L<span style="color:#f92672">,</span> i <span style="color:#f92672">-&gt;</span> i <span style="color:#f92672">+</span> 1<span style="color:#f92672">)</span>
+			<span style="color:#f92672">.</span><span style="color:#a6e22e">limit</span><span style="color:#f92672">(</span>n<span style="color:#f92672">)</span>
+			<span style="color:#f92672">.</span><span style="color:#a6e22e">reduce</span><span style="color:#f92672">(</span>0L<span style="color:#f92672">,</span> Long<span style="color:#f92672">::</span>sum<span style="color:#f92672">);</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>上面的方法也可以通过传统的for循环方式实现：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">long</span> <span style="color:#a6e22e">iterativeSum</span><span style="color:#f92672">(</span><span style="color:#66d9ef">long</span> n<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+	<span style="color:#66d9ef">long</span> result <span style="color:#f92672">=</span> 0<span style="color:#f92672">;</span>
+	<span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">long</span> i <span style="color:#f92672">=</span> 1L<span style="color:#f92672">;</span> i <span style="color:#f92672">&lt;=</span> n<span style="color:#f92672">;</span> i<span style="color:#f92672">++)</span> <span style="color:#f92672">{</span>
+		result <span style="color:#f92672">+=</span> i<span style="color:#f92672">;</span>
+	<span style="color:#f92672">}</span>
+	<span style="color:#66d9ef">return</span> result<span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>编写测试代码：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+	<span style="color:#66d9ef">long</span> number <span style="color:#f92672">=</span> 10000000L<span style="color:#f92672">;</span>
+    System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Sequential Sum: &#34;</span> <span style="color:#f92672">+</span> sumPerformanceTest<span style="color:#f92672">(</span>StreamTest<span style="color:#f92672">::</span>sequentialSum<span style="color:#f92672">,</span> number<span style="color:#f92672">)</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34; 毫秒&#34;</span><span style="color:#f92672">);</span>
+    System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Iterative Sum: &#34;</span> <span style="color:#f92672">+</span> sumPerformanceTest<span style="color:#f92672">(</span>StreamTest<span style="color:#f92672">::</span>iterativeSum<span style="color:#f92672">,</span> number<span style="color:#f92672">)</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34; 毫秒&#34;</span><span style="color:#f92672">);</span>
+<span style="color:#f92672">}</span>
+
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">long</span> <span style="color:#a6e22e">sumPerformanceTest</span><span style="color:#f92672">(</span>Function<span style="color:#f92672">&lt;</span>Long<span style="color:#f92672">,</span> Long<span style="color:#f92672">&gt;</span> function<span style="color:#f92672">,</span> <span style="color:#66d9ef">long</span> number<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+	<span style="color:#66d9ef">long</span> maxValue <span style="color:#f92672">=</span> Long<span style="color:#f92672">.</span><span style="color:#a6e22e">MAX_VALUE</span><span style="color:#f92672">;</span>
+
+	<span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> i<span style="color:#f92672">=</span>0<span style="color:#f92672">;</span> i<span style="color:#f92672">&lt;</span>10<span style="color:#f92672">;</span> i<span style="color:#f92672">++)</span> <span style="color:#f92672">{</span>
+		<span style="color:#66d9ef">long</span> start <span style="color:#f92672">=</span> System<span style="color:#f92672">.</span><span style="color:#a6e22e">nanoTime</span><span style="color:#f92672">();</span>
+		<span style="color:#66d9ef">long</span> sum <span style="color:#f92672">=</span> function<span style="color:#f92672">.</span><span style="color:#a6e22e">apply</span><span style="color:#f92672">(</span>n<span style="color:#f92672">);</span>
+		<span style="color:#66d9ef">long</span> end <span style="color:#f92672">=</span> System<span style="color:#f92672">.</span><span style="color:#a6e22e">nanoTime</span><span style="color:#f92672">();</span>
+		System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Result: &#34;</span> <span style="color:#f92672">+</span> sum<span style="color:#f92672">);</span>
+		<span style="color:#66d9ef">long</span> time <span style="color:#f92672">=</span> <span style="color:#f92672">(</span> end <span style="color:#f92672">-</span> start <span style="color:#f92672">)</span> <span style="color:#f92672">/</span> 1000000<span style="color:#f92672">;</span>
+
+		<span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>time <span style="color:#f92672">&lt;</span> maxValue<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+			maxValue <span style="color:#f92672">=</span> time<span style="color:#f92672">;</span>
+		<span style="color:#f92672">}</span>
+	<span style="color:#f92672">}</span>
+
+	<span style="color:#66d9ef">return</span> maxValue<span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>为了方便测试，我们编写一个<code>sumPerformanceTest()</code>方法，参数<code>number</code>表示给定的一个数，用于计算从1到这个数的所有自然数之和。该方法内部执行10次运算，返回时间最短的一次运算结果。</p>
+<p>运行上面的代码，可以在控制台看到如下结果：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Result: 200000010000000
+Result: 200000010000000
+Result: 200000010000000
+Result: 200000010000000
+Result: 200000010000000
+Result: 200000010000000
+Result: 200000010000000
+Result: 200000010000000
+Result: 200000010000000
+Result: 200000010000000
+Sequential Sum<span style="color:#f92672">:</span> 159 毫秒
+Result: 200000010000000
+Result: 200000010000000
+Result: 200000010000000
+Result: 200000010000000
+Result: 200000010000000
+Result: 200000010000000
+Result: 200000010000000
+Result: 200000010000000
+Result: 200000010000000
+Result: 200000010000000
+Iterative Sum<span style="color:#f92672">:</span> 5 毫秒
+</code></pre></div><p>可以看出，采用传统的for循环更快，因为它不用做任何自动拆箱/装箱操作，操作的都是基本类型。这个测试结果并不客观，提升的性能取决于机器的配置，以上是我在公司的台式机（机器配置为<code>Intel(R) Core i7-6700 CPU 3.40HZ; 8GB RAM</code>）上运行的结果。</p>
+<p>现在我们使用并行流测试一下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">long</span> <span style="color:#a6e22e">parallelSum</span><span style="color:#f92672">(</span><span style="color:#66d9ef">long</span> n<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+	<span style="color:#66d9ef">return</span> Stream<span style="color:#f92672">.</span><span style="color:#a6e22e">iterate</span><span style="color:#f92672">(</span>1L<span style="color:#f92672">,</span> i <span style="color:#f92672">-&gt;</span> i <span style="color:#f92672">+</span> 1<span style="color:#f92672">)</span>
+			<span style="color:#f92672">.</span><span style="color:#a6e22e">limit</span><span style="color:#f92672">(</span>n<span style="color:#f92672">)</span>
+			<span style="color:#f92672">.</span><span style="color:#a6e22e">parallel</span><span style="color:#f92672">()</span>
+			<span style="color:#f92672">.</span><span style="color:#a6e22e">reduce</span><span style="color:#f92672">(</span>0L<span style="color:#f92672">,</span> Long<span style="color:#f92672">::</span>sum<span style="color:#f92672">);</span>
+<span style="color:#f92672">}</span>
+
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+	System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Parallel Sum: &#34;</span> <span style="color:#f92672">+</span> sumPerformanceTest<span style="color:#f92672">(</span>StreamTest<span style="color:#f92672">::</span>parallelSum<span style="color:#f92672">,</span> number<span style="color:#f92672">)</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34; 毫秒&#34;</span><span style="color:#f92672">);</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>并行流执行结果为：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Result: 200000010000000
+Result: 200000010000000
+Result: 200000010000000
+Result: 200000010000000
+Result: 200000010000000
+Result: 200000010000000
+Result: 200000010000000
+Result: 200000010000000
+Result: 200000010000000
+Result: 200000010000000
+Parallel Sum<span style="color:#f92672">:</span> 570 毫秒
+</code></pre></div><p>并行的执行效率比顺序执行还要慢，这个结果让人大跌眼镜。主要有两个原因：</p>
+<ol>
+<li><code>iterate()</code>方法生成的对象是基本类型的包装类（也就是<code>java.lang.Long</code>类型），必须进行拆箱操作才能运算。</li>
+<li><code>iterate()</code>方法不适合用并行流处理。</li>
+</ol>
+<p>第一个原因容易理解，自动拆箱操作确实需要花费一定的时间，这从前一个例子可以看出来。第二个原因中<code>iterate()</code>方法不适合用并行流处理，主要原因是<code>iterate()</code>方法内部机制的问题。<code>iterate()</code>方法每次执行都需要依赖前一次的结果，比如本次执行的输入值为10，这个输入值必须是前一次运算结果的输出，因此<code>iterate()</code>方法很难使用并行流分割成不同小块处理。实际上，上面的并行流程序还增加了顺序处理的额外开销，因为需要把每次操作执行的结果分别分配到不同的线程中。</p>
+<p>一个有效的处理方式是使用<code>LongStream.rangeClosed()</code>方法，该方法弥补了上述例子的两个缺点，它生成的是基本类型而非包装类，不用拆箱操作就可以运算，并且，它生成的是由范围的数字，很容易拆分。如：生成1-20范围的数字可以拆分成1-10, 11-20。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">long</span> <span style="color:#a6e22e">rangedSum</span><span style="color:#f92672">(</span><span style="color:#66d9ef">long</span> n<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+	<span style="color:#66d9ef">return</span> LongStream<span style="color:#f92672">.</span><span style="color:#a6e22e">rangeClosed</span><span style="color:#f92672">(</span>1<span style="color:#f92672">,</span> n<span style="color:#f92672">)</span>
+			<span style="color:#f92672">.</span><span style="color:#a6e22e">reduce</span><span style="color:#f92672">(</span>0L<span style="color:#f92672">,</span> Long<span style="color:#f92672">::</span>sum<span style="color:#f92672">);</span>
+<span style="color:#f92672">}</span>
+
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+	System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Ranged Sum: &#34;</span> <span style="color:#f92672">+</span> sumPerformanceTest<span style="color:#f92672">(</span>StreamTest<span style="color:#f92672">::</span>rangedSum<span style="color:#f92672">,</span> number<span style="color:#f92672">)</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34; 毫秒&#34;</span><span style="color:#f92672">);</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>执行结果为：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Result: 200000010000000
+Result: 200000010000000
+Result: 200000010000000
+Result: 200000010000000
+Result: 200000010000000
+Result: 200000010000000
+Result: 200000010000000
+Result: 200000010000000
+Result: 200000010000000
+Result: 200000010000000
+Ranged Sum<span style="color:#f92672">:</span> 8 毫秒
+</code></pre></div><p>这个结果比起<code>sequentialSum()</code>方法执行的结果还要快，所以选择合适的数据结构有时候比并行化处理更重要。我们再将<code>rangeClosed()</code>方法生成的流转化为并行流：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">long</span> <span style="color:#a6e22e">parallelRangedSum</span><span style="color:#f92672">(</span><span style="color:#66d9ef">long</span> n<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">return</span> LongStream<span style="color:#f92672">.</span><span style="color:#a6e22e">rangeClosed</span><span style="color:#f92672">(</span>1<span style="color:#f92672">,</span> n<span style="color:#f92672">)</span>
+            <span style="color:#f92672">.</span><span style="color:#a6e22e">parallel</span><span style="color:#f92672">()</span>
+            <span style="color:#f92672">.</span><span style="color:#a6e22e">reduce</span><span style="color:#f92672">(</span>0L<span style="color:#f92672">,</span> Long<span style="color:#f92672">::</span>sum<span style="color:#f92672">);</span>
+<span style="color:#f92672">}</span>
+
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+	System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Parallel Ranged Sum: &#34;</span> <span style="color:#f92672">+</span> sumPerformanceTest<span style="color:#f92672">(</span>StreamTest<span style="color:#f92672">::</span>parallelRangedSum<span style="color:#f92672">,</span> number<span style="color:#f92672">)</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34; 毫秒&#34;</span><span style="color:#f92672">);</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>执行结果为：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Result: 200000010000000
+Result: 200000010000000
+Result: 200000010000000
+Result: 200000010000000
+Result: 200000010000000
+Result: 200000010000000
+Result: 200000010000000
+Result: 200000010000000
+Result: 200000010000000
+Result: 200000010000000
+Parallel Ranged Sum<span style="color:#f92672">:</span> 2 毫秒
+</code></pre></div><p>我们终于得到了想要的结果，所以并行操作需要选择合适的数据结构，建议多做测试，找到合适的并行方式再执行，否则很容易跳到坑里。</p>
+</div>
+        <div class="post_footer">
+          
+          <div class="meta">
+            <div class="info">
+              <span class="field tags">
+                <i class="remixicon-stack-line"></i>
+                
+                <a href="https://ffppss.github.io/tags/java/">java</a>
+                
+                <a href="https://ffppss.github.io/tags/stream/">Stream</a>
+                
+                <a href="https://ffppss.github.io/tags/%E6%96%B0%E7%89%B9%E6%80%A7/">新特性</a>
+                
+              </span>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+      
+      
+    </div>
+  </div>
+  <a id="back_to_top" href="#" class="back_to_top"><span>△</span></a>
+</div>
+
+<footer class="footer">
+  <div class="powered_by" style="color: #cccccc;">
+    Proudly published with <a href="http://www.gohugo.io/">Hugo&nbsp;&nbsp;</a>
+    Theme <a href="https://github.com/imzeuk/hugo-theme-zozo themes/zozo">zozo</a>
+  </div>
+
+  
+</footer>
+
+
+
+<script src="https://ffppss.github.io/js/jquery-3.3.1.min.js"></script>
+<script src="https://ffppss.github.io/js/zozo.js"></script>
+<script src="https://ffppss.github.io/js/highlight.pack.js"></script>
+<link  href="https://ffppss.github.io/css/fancybox.min.css" rel="stylesheet">
+<script src="https://ffppss.github.io/js/fancybox.min.js"></script>
+
+<script>hljs.initHighlightingOnLoad()</script>
+
+
+  <script type="text/javascript" async src="https://cdn.bootcss.com/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[\[','\]\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+
+MathJax.Hub.Queue(function() {
+    
+    
+    
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<style>
+code.has-jax {
+    font: inherit;
+    font-size: 100%;
+    background: inherit;
+    border: inherit;
+    color: #515151;
+}
+</style>
+
+
+
+
+
+
+</body>
+</html>
