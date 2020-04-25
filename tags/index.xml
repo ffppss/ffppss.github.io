@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Tags on 无尽光芒</title>
+    <title>Tags on 杂货铺</title>
     <link>https://ffppss.github.io/tags/</link>
-    <description>Recent content in Tags on 无尽光芒</description>
+    <description>Recent content in Tags on 杂货铺</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <lastBuildDate>Fri, 24 Apr 2020 23:49:40 +0800</lastBuildDate>
@@ -12,29 +12,29 @@
     
     
     <item>
-      <title>a</title>
-      <link>https://ffppss.github.io/tags/a/</link>
+      <title>Arrays</title>
+      <link>https://ffppss.github.io/tags/arrays/</link>
       <pubDate>Fri, 24 Apr 2020 23:49:40 +0800</pubDate>
       
-      <guid>https://ffppss.github.io/tags/a/</guid>
+      <guid>https://ffppss.github.io/tags/arrays/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>b</title>
-      <link>https://ffppss.github.io/tags/b/</link>
+      <title>Collections</title>
+      <link>https://ffppss.github.io/tags/collections/</link>
       <pubDate>Fri, 24 Apr 2020 23:49:40 +0800</pubDate>
       
-      <guid>https://ffppss.github.io/tags/b/</guid>
+      <guid>https://ffppss.github.io/tags/collections/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>c</title>
-      <link>https://ffppss.github.io/tags/c/</link>
+      <title>java</title>
+      <link>https://ffppss.github.io/tags/java/</link>
       <pubDate>Fri, 24 Apr 2020 23:49:40 +0800</pubDate>
       
-      <guid>https://ffppss.github.io/tags/c/</guid>
+      <guid>https://ffppss.github.io/tags/java/</guid>
       <description></description>
     </item>
     
@@ -53,15 +53,6 @@
       <pubDate>Fri, 24 Apr 2020 17:49:40 +0800</pubDate>
       
       <guid>https://ffppss.github.io/tags/interface/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>java</title>
-      <link>https://ffppss.github.io/tags/java/</link>
-      <pubDate>Fri, 24 Apr 2020 17:49:40 +0800</pubDate>
-      
-      <guid>https://ffppss.github.io/tags/java/</guid>
       <description></description>
     </item>
     

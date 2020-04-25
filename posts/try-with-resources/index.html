@@ -1,427 +1,271 @@
 <!DOCTYPE html>
-<html lang="zh-cn" >
+<html lang="zh-cn">
+
 <head>
-  <meta charset="utf-8"/>
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  
-  <meta name="author"
-        content="Zeuk"/>
 
-  
-  <meta name="description" content="背景 众所周知，所有被打开的系统资源，比如流、文件或者Socket连接等，都需要被开发者手动关闭，否则随着程序的不断运行，资源泄露将会累积成重大的生产事故。 在Java的江湖中，存在着一种名为finall"/>
-  
+  <meta name="author" content="Zeuk" />
 
-  
-  
-  <meta name="keywords" content="Hugo, theme, zozo"/>
-  
 
-  
-  <link rel="canonical" href="https://ffppss.github.io/posts/try-with-resources/"/>
+  <meta name="description"
+    content="背景 众所周知，所有被打开的系统资源，比如流、文件或者Socket连接等，都需要被开发者手动关闭，否则随着程序的不断运行，资源泄露将会累积成重大的生产事故。 在Java的江湖中，存在着一种名为finall" />
 
-  
 
-  <title>Java try-with-resource 语法糖 &middot; 无尽光芒</title>
 
-  <link rel="shortcut icon" href="https://ffppss.github.io/images/favicon.ico"/>
-  <link rel="stylesheet" href="https://ffppss.github.io/css/animate.min.css"/>
-  <link rel="stylesheet" href="https://ffppss.github.io/css/remixicon.css"/>
-  <link rel="stylesheet" href="https://ffppss.github.io/css/zozo.css"/>
-  <link rel="stylesheet" href="https://ffppss.github.io/css/highlight.css"/>
-  <link rel="stylesheet" href="https://ffppss.github.io/css/custom.css"/>
 
-  
-  
+  <meta name="keywords" content="Hugo, theme, zozo" />
+
+
+
+  <link rel="canonical" href="https://ffppss.github.io/posts/try-with-resources/" />
+
+
+
+  <title>Java try-with-resource 语法糖 &middot; 杂货铺</title>
+
+  <link rel="shortcut icon" href="https://ffppss.github.io/images/favicon.ico" />
+  <link rel="stylesheet" href="https://ffppss.github.io/css/animate.min.css" />
+  <link rel="stylesheet" href="https://ffppss.github.io/css/remixicon.css" />
+  <link rel="stylesheet" href="https://ffppss.github.io/css/zozo.css" />
+  <link rel="stylesheet" href="https://ffppss.github.io/css/highlight.css" />
+  <link rel="stylesheet" href="https://ffppss.github.io/css/custom.css" />
+
+
+
 
   <script>
-    (function(d) {
+    (function (d) {
       var config = {
-        kitId: 'kfn1kkp',
-        scriptTimeout: 3000,
-        async: true
-      },
-      h=d.documentElement,t=setTimeout(function(){h.className=h.className.replace(/\bwf-loading\b/g,"")+" wf-inactive";},config.scriptTimeout),tk=d.createElement("script"),f=false,s=d.getElementsByTagName("script")[0],a;h.className+=" wf-loading";tk.src='https://use.typekit.net/'+config.kitId+'.js';tk.async=true;tk.onload=tk.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete"&&a!="loaded")return;f=true;clearTimeout(t);try{Typekit.load(config)}catch(e){}};s.parentNode.insertBefore(tk,s)
+          kitId: 'kfn1kkp',
+          scriptTimeout: 3000,
+          async: true
+        },
+        h = d.documentElement,
+        t = setTimeout(function () {
+          h.className = h.className.replace(/\bwf-loading\b/g, "") + " wf-inactive";
+        }, config.scriptTimeout),
+        tk = d.createElement("script"),
+        f = false,
+        s = d.getElementsByTagName("script")[0],
+        a;
+      h.className += " wf-loading";
+      tk.src = 'https://use.typekit.net/' + config.kitId + '.js';
+      tk.async = true;
+      tk.onload = tk.onreadystatechange = function () {
+        a = this.readyState;
+        if (f || a && a != "complete" && a != "loaded") return;
+        f = true;
+        clearTimeout(t);
+        try {
+          Typekit.load(config)
+        } catch (e) {}
+      };
+      s.parentNode.insertBefore(tk, s)
     })(document);
   </script>
 </head>
 
 <body>
-<div class="main animated">
-  <div class="nav_container animated fadeInDown">
-  <div class="site_nav" id="site_nav">
-    <ul>
-      
-      <li>
-        <a href="/">首页</a>
-      </li>
-      
-      <li>
-        <a href="/posts/">归档</a>
-      </li>
-      
-      <li>
-        <a href="/tags/">标签</a>
-      </li>
-      
-      <li>
-        <a href="/about/">关于</a>
-      </li>
-      
-    </ul>
-  </div>
-  <div class="menu_icon">
-    <a id="menu_icon"><i class="remixicon-links-line"></i></a>
-  </div>
-</div>
+  <div class="main animated">
+    <div class="nav_container animated fadeInDown">
+      <div class="site_nav" id="site_nav">
+        <ul>
 
-  <div class="header animated fadeInDown">
-  <div class="site_title_container">
-    <div class="site_title">
-      <h1>
-        <a href="https://ffppss.github.io">
-          <span>无尽光芒</span>
-          <img src="https://ffppss.github.io/images/logo.svg"/>
-        </a>
-      </h1>
-    </div>
-    <div class="description">
-      <p class="sub_title">老冯的杂货铺</p>
-      <div class="text_center">
-        <img src="https://ffppss.github.io/images/ball.png" style="width:64px;height:64px;"/>
+          <li>
+            <a href="/">首页</a>
+          </li>
+
+          <li>
+            <a href="/posts/">归档</a>
+          </li>
+
+          <li>
+            <a href="/tags/">标签</a>
+          </li>
+
+          <li>
+            <a href="/about/">关于</a>
+          </li>
+
+        </ul>
       </div>
-      <div class="my_socials">
-        
-        
-        <script>
-        </script>
-        <a href="%20" title="github" target="_blank"><i class="remixicon-github-fill"></i></a>
-        
-        
-        
-        <script>
-        </script>
-        <a href="%20" title="mail" target="_blank"><i class="remixicon-mail-fill"></i></a>
-        
-        
-        
-        <script>
-        </script>
-        <a href="%20" title="qq" target="_blank"><i class="remixicon-qq-fill"></i></a>
-        
-        
-        
-        <script>
-        </script>
-        <a href="%20" title="wechat" target="_blank"><i class="remixicon-wechat-fill"></i></a>
-        
-        
-        
+      <div class="menu_icon">
+        <a id="menu_icon"><i class="remixicon-links-line"></i></a>
       </div>
     </div>
-  </div>
-</div>
 
-  <div class="content">
-    <div class="post_page">
-      <div class="post animated fadeInDown">
-        <div class="post_title post_detail_title">
-          <h2><a href='/posts/try-with-resources/'>Java try-with-resource 语法糖</a></h2>
-          <span class="date">2020.04.24</span>
+    <div class="header animated fadeInDown">
+      <div class="site_title_container">
+        <div class="site_title">
+          <h1>
+            <a href="https://ffppss.github.io">
+              <span>杂货铺</span>
+              <img src="https://ffppss.github.io/images/logo.svg" />
+            </a>
+          </h1>
         </div>
-        <div class="post_content markdown"><h2 id="背景">背景</h2>
-<p>众所周知，所有被打开的系统资源，比如流、文件或者Socket连接等，都需要被开发者手动关闭，否则随着程序的不断运行，资源泄露将会累积成重大的生产事故。</p>
-<p>在Java的江湖中，存在着一种名为finally的功夫，它可以保证当你习武走火入魔之时，还可以做一些自救的操作。在远古时代，处理资源关闭的代码通常写在finally块中。然而，如果你同时打开了多个资源，那么将会出现噩梦般的场景：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Demo</span> <span style="color:#f92672">{</span>
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
-        BufferedInputStream bin <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
-        BufferedOutputStream bout <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
-        <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
-            bin <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> BufferedInputStream<span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> FileInputStream<span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> File<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;test.txt&#34;</span><span style="color:#f92672">)));</span>
-            bout <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> BufferedOutputStream<span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> FileOutputStream<span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> File<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;out.txt&#34;</span><span style="color:#f92672">)));</span>
-            <span style="color:#66d9ef">int</span> b<span style="color:#f92672">;</span>
-            <span style="color:#66d9ef">while</span> <span style="color:#f92672">((</span>b <span style="color:#f92672">=</span> bin<span style="color:#f92672">.</span><span style="color:#a6e22e">read</span><span style="color:#f92672">())</span> <span style="color:#f92672">!=</span> <span style="color:#f92672">-</span>1<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
-                bout<span style="color:#f92672">.</span><span style="color:#a6e22e">write</span><span style="color:#f92672">(</span>b<span style="color:#f92672">);</span>
-            <span style="color:#f92672">}</span>
-        <span style="color:#f92672">}</span>
-        <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>IOException e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
-            e<span style="color:#f92672">.</span><span style="color:#a6e22e">printStackTrace</span><span style="color:#f92672">();</span>
-        <span style="color:#f92672">}</span>
-        <span style="color:#66d9ef">finally</span> <span style="color:#f92672">{</span>
-            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>bin <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
-                <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
-                    bin<span style="color:#f92672">.</span><span style="color:#a6e22e">close</span><span style="color:#f92672">();</span>
-                <span style="color:#f92672">}</span>
-                <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>IOException e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
-                    e<span style="color:#f92672">.</span><span style="color:#a6e22e">printStackTrace</span><span style="color:#f92672">();</span>
-                <span style="color:#f92672">}</span>
-                <span style="color:#66d9ef">finally</span> <span style="color:#f92672">{</span>
-                    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>bout <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
-                        <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
-                            bout<span style="color:#f92672">.</span><span style="color:#a6e22e">close</span><span style="color:#f92672">();</span>
-                        <span style="color:#f92672">}</span>
-                        <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>IOException e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
-                            e<span style="color:#f92672">.</span><span style="color:#a6e22e">printStackTrace</span><span style="color:#f92672">();</span>
-                        <span style="color:#f92672">}</span>
-                    <span style="color:#f92672">}</span>
-                <span style="color:#f92672">}</span>
-            <span style="color:#f92672">}</span>
-        <span style="color:#f92672">}</span>
-    <span style="color:#f92672">}</span>
-<span style="color:#f92672">}</span>
-</code></pre></div><p>Oh My God！！！<strong>关闭资源的代码竟然比业务代码还要多</strong>！！！这是因为，我们不仅需要关闭<code>BufferedInputStream</code>，还需要保证如果关闭<code>BufferedInputStream</code>时出现了异常， <code>BufferedOutputStream</code>也要能被正确地关闭。所以我们不得不借助finally中嵌套finally大法。可以想到，打开的资源越多，finally中嵌套的将会越深！！！</p>
-<p>Java 1.7中新增的try-with-resource语法糖来打开资源，而无需码农们自己书写资源来关闭代码。我们用try-with-resource来改写刚才的例子：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TryWithResource</span> <span style="color:#f92672">{</span>
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
-        <span style="color:#66d9ef">try</span> <span style="color:#f92672">(</span>BufferedInputStream bin <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> BufferedInputStream<span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> FileInputStream<span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> File<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;test.txt&#34;</span><span style="color:#f92672">)));</span>
-             BufferedOutputStream bout <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> BufferedOutputStream<span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> FileOutputStream<span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> File<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;out.txt&#34;</span><span style="color:#f92672">))))</span> <span style="color:#f92672">{</span>
-            <span style="color:#66d9ef">int</span> b<span style="color:#f92672">;</span>
-            <span style="color:#66d9ef">while</span> <span style="color:#f92672">((</span>b <span style="color:#f92672">=</span> bin<span style="color:#f92672">.</span><span style="color:#a6e22e">read</span><span style="color:#f92672">())</span> <span style="color:#f92672">!=</span> <span style="color:#f92672">-</span>1<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
-                bout<span style="color:#f92672">.</span><span style="color:#a6e22e">write</span><span style="color:#f92672">(</span>b<span style="color:#f92672">);</span>
-            <span style="color:#f92672">}</span>
-        <span style="color:#f92672">}</span>
-        <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>IOException e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
-            e<span style="color:#f92672">.</span><span style="color:#a6e22e">printStackTrace</span><span style="color:#f92672">();</span>
-        <span style="color:#f92672">}</span>
-    <span style="color:#f92672">}</span>
-<span style="color:#f92672">}</span>
-</code></pre></div><h2 id="动手实践">动手实践</h2>
-<p>为了能够配合try-with-resource，资源必须实现<code>AutoClosable</code>接口。该接口的实现类需要重写<code>close</code>方法：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Connection</span> <span style="color:#66d9ef">implements</span> AutoCloseable <span style="color:#f92672">{</span>
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">sendData</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
-        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;正在发送数据&#34;</span><span style="color:#f92672">);</span>
-    <span style="color:#f92672">}</span>
-    <span style="color:#a6e22e">@Override</span>
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">close</span><span style="color:#f92672">()</span> <span style="color:#66d9ef">throws</span> Exception <span style="color:#f92672">{</span>
-        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;正在关闭连接&#34;</span><span style="color:#f92672">);</span>
-    <span style="color:#f92672">}</span>
-<span style="color:#f92672">}</span>
-</code></pre></div><p>调用类：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TryWithResource</span> <span style="color:#f92672">{</span>
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
-        <span style="color:#66d9ef">try</span> <span style="color:#f92672">(</span>Connection conn <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Connection<span style="color:#f92672">())</span> <span style="color:#f92672">{</span>
-            conn<span style="color:#f92672">.</span><span style="color:#a6e22e">sendData</span><span style="color:#f92672">();</span>
-        <span style="color:#f92672">}</span>
-        <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>Exception e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
-            e<span style="color:#f92672">.</span><span style="color:#a6e22e">printStackTrace</span><span style="color:#f92672">();</span>
-        <span style="color:#f92672">}</span>
-    <span style="color:#f92672">}</span>
-<span style="color:#f92672">}</span>
-</code></pre></div><p>运行后输出结果：</p>
-<pre><code>正在发送数据
-正在关闭连接
-</code></pre><p>通过结果我们可以看到，close方法被自动调用了。</p>
-<h2 id="原理">原理</h2>
-<p>那么这个是怎么做到的呢？我相信聪明的你们一定已经猜到了，其实，这一切都是编译器大神搞的鬼。我们反编译刚才例子的class文件：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TryWithResource</span> <span style="color:#f92672">{</span>
-    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">TryWithResource</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
-    <span style="color:#f92672">}</span>
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
-        <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
-            Connection e <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Connection<span style="color:#f92672">();</span>
-            Throwable var2 <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
-            <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
-                e<span style="color:#f92672">.</span><span style="color:#a6e22e">sendData</span><span style="color:#f92672">();</span>
-            <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>Throwable var12<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
-                var2 <span style="color:#f92672">=</span> var12<span style="color:#f92672">;</span>
-                <span style="color:#66d9ef">throw</span> var12<span style="color:#f92672">;</span>
-            <span style="color:#f92672">}</span> <span style="color:#66d9ef">finally</span> <span style="color:#f92672">{</span>
-                <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>e <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
-                    <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>var2 <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
-                        <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
-                            e<span style="color:#f92672">.</span><span style="color:#a6e22e">close</span><span style="color:#f92672">();</span>
-                        <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>Throwable var11<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
-                            var2<span style="color:#f92672">.</span><span style="color:#a6e22e">addSuppressed</span><span style="color:#f92672">(</span>var11<span style="color:#f92672">);</span>
-                        <span style="color:#f92672">}</span>
-                    <span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#f92672">{</span>
-                        e<span style="color:#f92672">.</span><span style="color:#a6e22e">close</span><span style="color:#f92672">();</span>
-                    <span style="color:#f92672">}</span>
-                <span style="color:#f92672">}</span>
-            <span style="color:#f92672">}</span>
-        <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>Exception var14<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
-            var14<span style="color:#f92672">.</span><span style="color:#a6e22e">printStackTrace</span><span style="color:#f92672">();</span>
-        <span style="color:#f92672">}</span>
-    <span style="color:#f92672">}</span>
-<span style="color:#f92672">}</span>
-</code></pre></div><p>看到没，在第15~27行，编译器自动帮我们生成了finally块，并且在里面调用了资源的close方法，所以例子中的close方法会在运行的时候被执行。</p>
-<h3 id="异常屏蔽">异常屏蔽</h3>
-<p>我相信，细心的你们肯定又发现了，刚才反编译的代码（第21行）比远古时代写的代码多了一个<code>addSuppressed</code>。为了了解这段代码的用意，我们稍微修改一下刚才的例子：我们将刚才的代码改回远古时代手动关闭异常的方式，并且在<code>sendData</code>和<code>close</code>方法中抛出异常：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Connection</span> <span style="color:#66d9ef">implements</span> AutoCloseable <span style="color:#f92672">{</span>
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">sendData</span><span style="color:#f92672">()</span> <span style="color:#66d9ef">throws</span> Exception <span style="color:#f92672">{</span>
-        <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> Exception<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;send data&#34;</span><span style="color:#f92672">);</span>
-    <span style="color:#f92672">}</span>
-    <span style="color:#a6e22e">@Override</span>
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">close</span><span style="color:#f92672">()</span> <span style="color:#66d9ef">throws</span> Exception <span style="color:#f92672">{</span>
-        <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> MyException<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;close&#34;</span><span style="color:#f92672">);</span>
-    <span style="color:#f92672">}</span>
-<span style="color:#f92672">}</span>
-</code></pre></div><p>修改main方法：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TryWithResource</span> <span style="color:#f92672">{</span>
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
-        <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
-            test<span style="color:#f92672">();</span>
-        <span style="color:#f92672">}</span>
-        <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>Exception e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
-            e<span style="color:#f92672">.</span><span style="color:#a6e22e">printStackTrace</span><span style="color:#f92672">();</span>
-        <span style="color:#f92672">}</span>
-    <span style="color:#f92672">}</span>
-    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">test</span><span style="color:#f92672">()</span> <span style="color:#66d9ef">throws</span> Exception <span style="color:#f92672">{</span>
-        Connection conn <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
-        <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
-            conn <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Connection<span style="color:#f92672">();</span>
-            conn<span style="color:#f92672">.</span><span style="color:#a6e22e">sendData</span><span style="color:#f92672">();</span>
-        <span style="color:#f92672">}</span>
-        <span style="color:#66d9ef">finally</span> <span style="color:#f92672">{</span>
-            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>conn <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
-                conn<span style="color:#f92672">.</span><span style="color:#a6e22e">close</span><span style="color:#f92672">();</span>
-            <span style="color:#f92672">}</span>
-        <span style="color:#f92672">}</span>
-    <span style="color:#f92672">}</span>
-<span style="color:#f92672">}</span>
-</code></pre></div><p>运行之后我们发现：</p>
-<pre><code>basic.exception.MyException: close
-	at basic.exception.Connection.close(Connection.java:10)
-	at basic.exception.TryWithResource.test(TryWithResource.java:82)
-	at basic.exception.TryWithResource.main(TryWithResource.java:7)
-	......
-</code></pre><p>好的，问题来了，由于我们一次只能抛出一个异常，所以在最上层看到的是最后一个抛出的异常——也就是<code>close</code>方法抛出的<code>MyException</code>，而<code>sendData</code>抛出的<code>Exception</code>被忽略了。这就是所谓的异常屏蔽。由于异常信息的丢失，异常屏蔽可能会导致某些bug变得极其难以发现，程序员们不得不加班加点地找bug，如此毒瘤，怎能不除！幸好，为了解决这个问题，从Java 1.7开始，大佬们为<code>Throwable</code>类新增了<code>addSuppressed</code>方法，支持将一个异常附加到另一个异常身上，从而避免异常屏蔽。那么被屏蔽的异常信息会通过怎样的格式输出呢？我们再运行一遍刚才用try-with-resource包裹的main方法：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">java<span style="color:#f92672">.</span><span style="color:#a6e22e">lang</span><span style="color:#f92672">.</span><span style="color:#a6e22e">Exception</span><span style="color:#f92672">:</span> send data
-
-	at basic<span style="color:#f92672">.</span><span style="color:#a6e22e">exception</span><span style="color:#f92672">.</span><span style="color:#a6e22e">Connection</span><span style="color:#f92672">.</span><span style="color:#a6e22e">sendData</span><span style="color:#f92672">(</span>Connection<span style="color:#f92672">.</span><span style="color:#a6e22e">java</span><span style="color:#f92672">:</span>5<span style="color:#f92672">)</span>
-	at basic<span style="color:#f92672">.</span><span style="color:#a6e22e">exception</span><span style="color:#f92672">.</span><span style="color:#a6e22e">TryWithResource</span><span style="color:#f92672">.</span><span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>TryWithResource<span style="color:#f92672">.</span><span style="color:#a6e22e">java</span><span style="color:#f92672">:</span>14<span style="color:#f92672">)</span>
-	<span style="color:#f92672">......</span>
-	Suppressed<span style="color:#f92672">:</span> basic<span style="color:#f92672">.</span><span style="color:#a6e22e">exception</span><span style="color:#f92672">.</span><span style="color:#a6e22e">MyException</span><span style="color:#f92672">:</span> close
-		at basic<span style="color:#f92672">.</span><span style="color:#a6e22e">exception</span><span style="color:#f92672">.</span><span style="color:#a6e22e">Connection</span><span style="color:#f92672">.</span><span style="color:#a6e22e">close</span><span style="color:#f92672">(</span>Connection<span style="color:#f92672">.</span><span style="color:#a6e22e">java</span><span style="color:#f92672">:</span>10<span style="color:#f92672">)</span>
-		at basic<span style="color:#f92672">.</span><span style="color:#a6e22e">exception</span><span style="color:#f92672">.</span><span style="color:#a6e22e">TryWithResource</span><span style="color:#f92672">.</span><span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>TryWithResource<span style="color:#f92672">.</span><span style="color:#a6e22e">java</span><span style="color:#f92672">:</span>15<span style="color:#f92672">)</span>
-		<span style="color:#f92672">...</span> 5 more
-</code></pre></div><p>可以看到，异常信息中多了一个<code>Suppressed</code>的提示，告诉我们这个异常其实由两个异常组成，<code>MyException</code>是被Suppressed的异常。可喜可贺！</p>
-<h3 id="一个小问题">一个小问题</h3>
-<p>在使用try-with-resource的过程中，一定需要了解资源的<code>close</code>方法内部的实现逻辑。否则还是可能会导致资源泄露。</p>
-<p>举个例子，在Java BIO中采用了大量的装饰器模式。当调用装饰器的<code>close</code>方法时，本质上是调用了装饰器内部包裹的流的<code>close</code>方法。比如：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TryWithResource</span> <span style="color:#f92672">{</span>
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
-        <span style="color:#66d9ef">try</span> <span style="color:#f92672">(</span>FileInputStream fin <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> FileInputStream<span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> File<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;input.txt&#34;</span><span style="color:#f92672">));</span>
-                GZIPOutputStream out <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> GZIPOutputStream<span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> FileOutputStream<span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> File<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;out.txt&#34;</span><span style="color:#f92672">))))</span> <span style="color:#f92672">{</span>
-            <span style="color:#66d9ef">byte</span><span style="color:#f92672">[]</span> buffer <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#66d9ef">byte</span><span style="color:#f92672">[</span>4096<span style="color:#f92672">];</span>
-            <span style="color:#66d9ef">int</span> read<span style="color:#f92672">;</span>
-            <span style="color:#66d9ef">while</span> <span style="color:#f92672">((</span>read <span style="color:#f92672">=</span> fin<span style="color:#f92672">.</span><span style="color:#a6e22e">read</span><span style="color:#f92672">(</span>buffer<span style="color:#f92672">))</span> <span style="color:#f92672">!=</span> <span style="color:#f92672">-</span>1<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
-                out<span style="color:#f92672">.</span><span style="color:#a6e22e">write</span><span style="color:#f92672">(</span>buffer<span style="color:#f92672">,</span> 0<span style="color:#f92672">,</span> read<span style="color:#f92672">);</span>
-            <span style="color:#f92672">}</span>
-        <span style="color:#f92672">}</span>
-        <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>IOException e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
-            e<span style="color:#f92672">.</span><span style="color:#a6e22e">printStackTrace</span><span style="color:#f92672">();</span>
-        <span style="color:#f92672">}</span>
-    <span style="color:#f92672">}</span>
-<span style="color:#f92672">}</span>
-</code></pre></div><p>在上述代码中，我们从<code>FileInputStream</code>中读取字节，并且写入到<code>GZIPOutputStream</code>中。<code>GZIPOutputStream</code>实际上是<code>FileOutputStream</code>的装饰器。由于try-with-resource的特性，实际编译之后的代码会在后面带上finally代码块，并且在里面调用fin.close()方法和out.close()方法。我们再来看<code>GZIPOutputStream</code>类的close方法：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">close</span><span style="color:#f92672">()</span> <span style="color:#66d9ef">throws</span> IOException <span style="color:#f92672">{</span>
-    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(!</span>closed<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
-        finish<span style="color:#f92672">();</span>
-        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>usesDefaultDeflater<span style="color:#f92672">)</span>
-            def<span style="color:#f92672">.</span><span style="color:#a6e22e">end</span><span style="color:#f92672">();</span>
-        out<span style="color:#f92672">.</span><span style="color:#a6e22e">close</span><span style="color:#f92672">();</span>
-        closed <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span><span style="color:#f92672">;</span>
-    <span style="color:#f92672">}</span>
-<span style="color:#f92672">}</span>
-</code></pre></div><p>我们可以看到，out变量实际上代表的是被装饰的<code>FileOutputStream</code>类。在调用out变量的<code>close</code>方法之前，<code>GZIPOutputStream</code>还做了<code>finish</code>操作，该操作还会继续往<code>FileOutputStream</code>中写压缩信息，此时如果出现异常，则会<code>out.close()</code>方法被略过，然而这个才是最底层的资源关闭方法。正确的做法是应该在try-with-resource中单独声明最底层的资源，保证对应的<code>close</code>方法一定能够被调用。在刚才的例子中，我们需要单独声明每个<code>FileInputStream</code>以及<code>FileOutputStream</code>：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TryWithResource</span> <span style="color:#f92672">{</span>
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
-        <span style="color:#66d9ef">try</span> <span style="color:#f92672">(</span>FileInputStream fin <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> FileInputStream<span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> File<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;input.txt&#34;</span><span style="color:#f92672">));</span>
-                FileOutputStream fout <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> FileOutputStream<span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> File<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;out.txt&#34;</span><span style="color:#f92672">));</span>
-                GZIPOutputStream out <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> GZIPOutputStream<span style="color:#f92672">(</span>fout<span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
-            <span style="color:#66d9ef">byte</span><span style="color:#f92672">[]</span> buffer <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#66d9ef">byte</span><span style="color:#f92672">[</span>4096<span style="color:#f92672">];</span>
-            <span style="color:#66d9ef">int</span> read<span style="color:#f92672">;</span>
-            <span style="color:#66d9ef">while</span> <span style="color:#f92672">((</span>read <span style="color:#f92672">=</span> fin<span style="color:#f92672">.</span><span style="color:#a6e22e">read</span><span style="color:#f92672">(</span>buffer<span style="color:#f92672">))</span> <span style="color:#f92672">!=</span> <span style="color:#f92672">-</span>1<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
-                out<span style="color:#f92672">.</span><span style="color:#a6e22e">write</span><span style="color:#f92672">(</span>buffer<span style="color:#f92672">,</span> 0<span style="color:#f92672">,</span> read<span style="color:#f92672">);</span>
-            <span style="color:#f92672">}</span>
-        <span style="color:#f92672">}</span>
-        <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>IOException e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
-            e<span style="color:#f92672">.</span><span style="color:#a6e22e">printStackTrace</span><span style="color:#f92672">();</span>
-        <span style="color:#f92672">}</span>
-    <span style="color:#f92672">}</span>
-<span style="color:#f92672">}</span>
-</code></pre></div><p>由于编译器会自动生成<code>fout.close()</code>的代码，这样肯定能够保证真正的流被关闭。</p>
-</div>
-        <div class="post_footer">
-          
-          <div class="meta">
-            <div class="info">
-              <span class="field tags">
-                <i class="remixicon-stack-line"></i>
-                
-                <a href="https://ffppss.github.io/tags/java/">java</a>
-                
-                <a href="https://ffppss.github.io/tags/try/">try</a>
-                
-                <a href="https://ffppss.github.io/tags/%E6%96%B0%E7%89%B9%E6%80%A7/">新特性</a>
-                
-              </span>
-            </div>
+        <div class="description">
+          <p class="sub_title">老冯的杂货铺</p>
+          <div class="text_center">
+            <img src="https://ffppss.github.io/images/ball.png" style="width:64px;height:64px;" />
           </div>
-          
+          <div class="my_socials">
+
+
+            <script>
+            </script>
+            <a href="%20" title="github" target="_blank"><i class="remixicon-github-fill"></i></a>
+
+
+
+            <script>
+            </script>
+            <a href="%20" title="mail" target="_blank"><i class="remixicon-mail-fill"></i></a>
+
+
+
+            <script>
+            </script>
+            <a href="%20" title="qq" target="_blank"><i class="remixicon-qq-fill"></i></a>
+
+
+
+            <script>
+            </script>
+            <a href="%20" title="wechat" target="_blank"><i class="remixicon-wechat-fill"></i></a>
+
+
+
+          </div>
         </div>
       </div>
-      
-      
     </div>
+
+    <div class="content">
+      <div class="post_page">
+        <div class="post animated fadeInDown">
+          <section id="nice" data-tool="mdnice编辑器" data-website="https://www.mdnice.com" style="font-size: 16px; color: black; padding: 0 10px; line-height: 1.6; word-spacing: 0px; letter-spacing: 0px; word-break: break-word; word-wrap: break-word; text-align: left; margin-top: -10px; font-family: PingFangSC-Light;"><h2 data-tool="mdnice编辑器" style="margin-top: 30px; margin-bottom: 15px; font-weight: bold; color: black; font-size: 22px; text-align: left; margin: 20px 10px 0px 0px;"><span class="prefix" style="display: none;"></span><span class="content" style="font-family: STHeitiSC-Light; font-size: 22px; color: #0e88eb; font-weight: bolder; display: inline-block; padding-left: 10px; border-left: 5px solid #0e88eb;">背景</span><span class="suffix"></span></h2>
+            <p data-tool="mdnice编辑器" style="padding-top: 8px; padding-bottom: 8px; color: black; margin: 10px 10px; line-height: 1.75; letter-spacing: 0.2em; font-size: 15px; word-spacing: 0.1em;">众所周知，所有被打开的系统资源，比如流、文件或者Socket连接等，都需要被开发者手动关闭，否则随着程序的不断运行，资源泄露将会累积成重大的生产事故。</p>
+            <p data-tool="mdnice编辑器" style="padding-top: 8px; padding-bottom: 8px; color: black; margin: 10px 10px; line-height: 1.75; letter-spacing: 0.2em; font-size: 15px; word-spacing: 0.1em;">在Java的江湖中，存在着一种名为finally的功夫，它可以保证当你习武走火入魔之时，还可以做一些自救的操作。在远古时代，处理资源关闭的代码通常写在finally块中。然而，如果你同时打开了多个资源，那么将会出现噩梦般的场景：</p>
+            <pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px;"><code class="hljs" style="overflow-x: auto; padding: 16px; color: #333; background: #f8f8f8; display: -webkit-box; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; border-radius: 0px; font-size: 12px; -webkit-overflow-scrolling: touch;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span>&nbsp;<span class="hljs-class" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">class</span>&nbsp;<span class="hljs-title" style="color: #458; font-weight: bold; line-height: 26px;">Demo</span>&nbsp;</span>{<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span>&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">static</span>&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">void</span>&nbsp;<span class="hljs-title" style="color: #900; font-weight: bold; line-height: 26px;">main</span><span class="hljs-params" style="line-height: 26px;">(String[]&nbsp;args)</span>&nbsp;</span>{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BufferedInputStream&nbsp;bin&nbsp;=&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">null</span>;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BufferedOutputStream&nbsp;bout&nbsp;=&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">null</span>;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">try</span>&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bin&nbsp;=&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">new</span>&nbsp;BufferedInputStream(<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">new</span>&nbsp;FileInputStream(<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">new</span>&nbsp;File(<span class="hljs-string" style="color: #d14; line-height: 26px;">"test.txt"</span>)));<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bout&nbsp;=&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">new</span>&nbsp;BufferedOutputStream(<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">new</span>&nbsp;FileOutputStream(<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">new</span>&nbsp;File(<span class="hljs-string" style="color: #d14; line-height: 26px;">"out.txt"</span>)));<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">int</span>&nbsp;b;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">while</span>&nbsp;((b&nbsp;=&nbsp;bin.read())&nbsp;!=&nbsp;-<span class="hljs-number" style="color: #008080; line-height: 26px;">1</span>)&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bout.write(b);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">catch</span>&nbsp;(IOException&nbsp;e)&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;e.printStackTrace();<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">finally</span>&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">if</span>&nbsp;(bin&nbsp;!=&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">null</span>)&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">try</span>&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bin.close();<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">catch</span>&nbsp;(IOException&nbsp;e)&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;e.printStackTrace();<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">finally</span>&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">if</span>&nbsp;(bout&nbsp;!=&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">null</span>)&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">try</span>&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bout.close();<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">catch</span>&nbsp;(IOException&nbsp;e)&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;e.printStackTrace();<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>}<br></code></pre>
+            <p data-tool="mdnice编辑器" style="padding-top: 8px; padding-bottom: 8px; color: black; margin: 10px 10px; line-height: 1.75; letter-spacing: 0.2em; font-size: 15px; word-spacing: 0.1em;">Oh My God！！！<strong style="font-weight: border; color: #0e88eb;">关闭资源的代码竟然比业务代码还要多</strong>！！！这是因为，我们不仅需要关闭<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; color: #1e6bb8; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all;">BufferedInputStream</code>，还需要保证如果关闭<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; color: #1e6bb8; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all;">BufferedInputStream</code>时出现了异常， <code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; color: #1e6bb8; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all;">BufferedOutputStream</code>也要能被正确地关闭。所以我们不得不借助finally中嵌套finally大法。可以想到，打开的资源越多，finally中嵌套的将会越深！！！</p>
+            <p data-tool="mdnice编辑器" style="padding-top: 8px; padding-bottom: 8px; color: black; margin: 10px 10px; line-height: 1.75; letter-spacing: 0.2em; font-size: 15px; word-spacing: 0.1em;">Java 1.7中新增的try-with-resource语法糖来打开资源，而无需码农们自己书写资源来关闭代码。我们用try-with-resource来改写刚才的例子：</p>
+            <pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px;"><code class="hljs" style="overflow-x: auto; padding: 16px; color: #333; background: #f8f8f8; display: -webkit-box; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; border-radius: 0px; font-size: 12px; -webkit-overflow-scrolling: touch;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span>&nbsp;<span class="hljs-class" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">class</span>&nbsp;<span class="hljs-title" style="color: #458; font-weight: bold; line-height: 26px;">TryWithResource</span>&nbsp;</span>{<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span>&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">static</span>&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">void</span>&nbsp;<span class="hljs-title" style="color: #900; font-weight: bold; line-height: 26px;">main</span><span class="hljs-params" style="line-height: 26px;">(String[]&nbsp;args)</span>&nbsp;</span>{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">try</span>&nbsp;(BufferedInputStream&nbsp;bin&nbsp;=&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">new</span>&nbsp;BufferedInputStream(<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">new</span>&nbsp;FileInputStream(<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">new</span>&nbsp;File(<span class="hljs-string" style="color: #d14; line-height: 26px;">"test.txt"</span>)));<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BufferedOutputStream&nbsp;bout&nbsp;=&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">new</span>&nbsp;BufferedOutputStream(<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">new</span>&nbsp;FileOutputStream(<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">new</span>&nbsp;File(<span class="hljs-string" style="color: #d14; line-height: 26px;">"out.txt"</span>))))&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">int</span>&nbsp;b;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">while</span>&nbsp;((b&nbsp;=&nbsp;bin.read())&nbsp;!=&nbsp;-<span class="hljs-number" style="color: #008080; line-height: 26px;">1</span>)&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bout.write(b);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">catch</span>&nbsp;(IOException&nbsp;e)&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;e.printStackTrace();<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>}<br></code></pre>
+            <h2 data-tool="mdnice编辑器" style="margin-top: 30px; margin-bottom: 15px; font-weight: bold; color: black; font-size: 22px; text-align: left; margin: 20px 10px 0px 0px;"><span class="prefix" style="display: none;"></span><span class="content" style="font-family: STHeitiSC-Light; font-size: 22px; color: #0e88eb; font-weight: bolder; display: inline-block; padding-left: 10px; border-left: 5px solid #0e88eb;">动手实践</span><span class="suffix"></span></h2>
+            <p data-tool="mdnice编辑器" style="padding-top: 8px; padding-bottom: 8px; color: black; margin: 10px 10px; line-height: 1.75; letter-spacing: 0.2em; font-size: 15px; word-spacing: 0.1em;">为了能够配合try-with-resource，资源必须实现<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; color: #1e6bb8; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all;">AutoClosable</code>接口。该接口的实现类需要重写<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; color: #1e6bb8; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all;">close</code>方法：</p>
+            <pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px;"><code class="hljs" style="overflow-x: auto; padding: 16px; color: #333; background: #f8f8f8; display: -webkit-box; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; border-radius: 0px; font-size: 12px; -webkit-overflow-scrolling: touch;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span>&nbsp;<span class="hljs-class" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">class</span>&nbsp;<span class="hljs-title" style="color: #458; font-weight: bold; line-height: 26px;">Connection</span>&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">implements</span>&nbsp;<span class="hljs-title" style="color: #458; font-weight: bold; line-height: 26px;">AutoCloseable</span>&nbsp;</span>{<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span>&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">void</span>&nbsp;<span class="hljs-title" style="color: #900; font-weight: bold; line-height: 26px;">sendData</span><span class="hljs-params" style="line-height: 26px;">()</span>&nbsp;</span>{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;System.out.println(<span class="hljs-string" style="color: #d14; line-height: 26px;">"正在发送数据"</span>);<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-meta" style="color: #999; font-weight: bold; line-height: 26px;">@Override</span><br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span>&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">void</span>&nbsp;<span class="hljs-title" style="color: #900; font-weight: bold; line-height: 26px;">close</span><span class="hljs-params" style="line-height: 26px;">()</span>&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">throws</span>&nbsp;Exception&nbsp;</span>{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;System.out.println(<span class="hljs-string" style="color: #d14; line-height: 26px;">"正在关闭连接"</span>);<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>}<br></code></pre>
+            <p data-tool="mdnice编辑器" style="padding-top: 8px; padding-bottom: 8px; color: black; margin: 10px 10px; line-height: 1.75; letter-spacing: 0.2em; font-size: 15px; word-spacing: 0.1em;">调用类：</p>
+            <pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px;"><code class="hljs" style="overflow-x: auto; padding: 16px; color: #333; background: #f8f8f8; display: -webkit-box; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; border-radius: 0px; font-size: 12px; -webkit-overflow-scrolling: touch;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span>&nbsp;<span class="hljs-class" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">class</span>&nbsp;<span class="hljs-title" style="color: #458; font-weight: bold; line-height: 26px;">TryWithResource</span>&nbsp;</span>{<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span>&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">static</span>&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">void</span>&nbsp;<span class="hljs-title" style="color: #900; font-weight: bold; line-height: 26px;">main</span><span class="hljs-params" style="line-height: 26px;">(String[]&nbsp;args)</span>&nbsp;</span>{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">try</span>&nbsp;(Connection&nbsp;conn&nbsp;=&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">new</span>&nbsp;Connection())&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;conn.sendData();<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">catch</span>&nbsp;(Exception&nbsp;e)&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;e.printStackTrace();<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>}<br></code></pre>
+            <p data-tool="mdnice编辑器" style="padding-top: 8px; padding-bottom: 8px; color: black; margin: 10px 10px; line-height: 1.75; letter-spacing: 0.2em; font-size: 15px; word-spacing: 0.1em;">运行后输出结果：</p>
+            <pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px;"><code class="hljs" style="overflow-x: auto; padding: 16px; color: #333; background: #f8f8f8; display: -webkit-box; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; border-radius: 0px; font-size: 12px; -webkit-overflow-scrolling: touch;">正在发送数据
+            正在关闭连接
+            </code></pre>
+            <p data-tool="mdnice编辑器" style="padding-top: 8px; padding-bottom: 8px; color: black; margin: 10px 10px; line-height: 1.75; letter-spacing: 0.2em; font-size: 15px; word-spacing: 0.1em;">通过结果我们可以看到，close方法被自动调用了。</p>
+            <h2 data-tool="mdnice编辑器" style="margin-top: 30px; margin-bottom: 15px; font-weight: bold; color: black; font-size: 22px; text-align: left; margin: 20px 10px 0px 0px;"><span class="prefix" style="display: none;"></span><span class="content" style="font-family: STHeitiSC-Light; font-size: 22px; color: #0e88eb; font-weight: bolder; display: inline-block; padding-left: 10px; border-left: 5px solid #0e88eb;">原理</span><span class="suffix"></span></h2>
+            <p data-tool="mdnice编辑器" style="padding-top: 8px; padding-bottom: 8px; color: black; margin: 10px 10px; line-height: 1.75; letter-spacing: 0.2em; font-size: 15px; word-spacing: 0.1em;">那么这个是怎么做到的呢？我相信聪明的你们一定已经猜到了，其实，这一切都是编译器大神搞的鬼。我们反编译刚才例子的class文件：</p>
+            <pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px;"><code class="hljs" style="overflow-x: auto; padding: 16px; color: #333; background: #f8f8f8; display: -webkit-box; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; border-radius: 0px; font-size: 12px; -webkit-overflow-scrolling: touch;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span>&nbsp;<span class="hljs-class" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">class</span>&nbsp;<span class="hljs-title" style="color: #458; font-weight: bold; line-height: 26px;">TryWithResource</span>&nbsp;</span>{<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span>&nbsp;<span class="hljs-title" style="color: #900; font-weight: bold; line-height: 26px;">TryWithResource</span><span class="hljs-params" style="line-height: 26px;">()</span>&nbsp;</span>{<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span>&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">static</span>&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">void</span>&nbsp;<span class="hljs-title" style="color: #900; font-weight: bold; line-height: 26px;">main</span><span class="hljs-params" style="line-height: 26px;">(String[]&nbsp;args)</span>&nbsp;</span>{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">try</span>&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Connection&nbsp;e&nbsp;=&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">new</span>&nbsp;Connection();<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Throwable&nbsp;var2&nbsp;=&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">null</span>;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">try</span>&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;e.sendData();<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">catch</span>&nbsp;(Throwable&nbsp;var12)&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var2&nbsp;=&nbsp;var12;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">throw</span>&nbsp;var12;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">finally</span>&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">if</span>(e&nbsp;!=&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">null</span>)&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">if</span>(var2&nbsp;!=&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">null</span>)&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">try</span>&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;e.close();<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">catch</span>&nbsp;(Throwable&nbsp;var11)&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var2.addSuppressed(var11);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">else</span>&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;e.close();<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">catch</span>&nbsp;(Exception&nbsp;var14)&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var14.printStackTrace();<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>}<br></code></pre>
+            <p data-tool="mdnice编辑器" style="padding-top: 8px; padding-bottom: 8px; color: black; margin: 10px 10px; line-height: 1.75; letter-spacing: 0.2em; font-size: 15px; word-spacing: 0.1em;">看到没，在第15~27行，编译器自动帮我们生成了finally块，并且在里面调用了资源的close方法，所以例子中的close方法会在运行的时候被执行。</p>
+            <h3 data-tool="mdnice编辑器" style="margin-top: 30px; margin-bottom: 15px; font-weight: bold; font-size: 18px; color: #0e88eb;"><span class="prefix" style="display: none;"></span><span class="content" style="font-size: 18px; color: #0e88eb;">异常屏蔽</span><span class="suffix" style="display: none;"></span></h3>
+            <p data-tool="mdnice编辑器" style="padding-top: 8px; padding-bottom: 8px; color: black; margin: 10px 10px; line-height: 1.75; letter-spacing: 0.2em; font-size: 15px; word-spacing: 0.1em;">我相信，细心的你们肯定又发现了，刚才反编译的代码（第21行）比远古时代写的代码多了一个<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; color: #1e6bb8; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all;">addSuppressed</code>。为了了解这段代码的用意，我们稍微修改一下刚才的例子：我们将刚才的代码改回远古时代手动关闭异常的方式，并且在<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; color: #1e6bb8; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all;">sendData</code>和<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; color: #1e6bb8; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all;">close</code>方法中抛出异常：</p>
+            <pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px;"><code class="hljs" style="overflow-x: auto; padding: 16px; color: #333; background: #f8f8f8; display: -webkit-box; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; border-radius: 0px; font-size: 12px; -webkit-overflow-scrolling: touch;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span>&nbsp;<span class="hljs-class" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">class</span>&nbsp;<span class="hljs-title" style="color: #458; font-weight: bold; line-height: 26px;">Connection</span>&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">implements</span>&nbsp;<span class="hljs-title" style="color: #458; font-weight: bold; line-height: 26px;">AutoCloseable</span>&nbsp;</span>{<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span>&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">void</span>&nbsp;<span class="hljs-title" style="color: #900; font-weight: bold; line-height: 26px;">sendData</span><span class="hljs-params" style="line-height: 26px;">()</span>&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">throws</span>&nbsp;Exception&nbsp;</span>{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">throw</span>&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">new</span>&nbsp;Exception(<span class="hljs-string" style="color: #d14; line-height: 26px;">"send&nbsp;data"</span>);<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-meta" style="color: #999; font-weight: bold; line-height: 26px;">@Override</span><br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span>&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">void</span>&nbsp;<span class="hljs-title" style="color: #900; font-weight: bold; line-height: 26px;">close</span><span class="hljs-params" style="line-height: 26px;">()</span>&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">throws</span>&nbsp;Exception&nbsp;</span>{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">throw</span>&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">new</span>&nbsp;MyException(<span class="hljs-string" style="color: #d14; line-height: 26px;">"close"</span>);<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>}<br></code></pre>
+            <p data-tool="mdnice编辑器" style="padding-top: 8px; padding-bottom: 8px; color: black; margin: 10px 10px; line-height: 1.75; letter-spacing: 0.2em; font-size: 15px; word-spacing: 0.1em;">修改main方法：</p>
+            <pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px;"><code class="hljs" style="overflow-x: auto; padding: 16px; color: #333; background: #f8f8f8; display: -webkit-box; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; border-radius: 0px; font-size: 12px; -webkit-overflow-scrolling: touch;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span>&nbsp;<span class="hljs-class" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">class</span>&nbsp;<span class="hljs-title" style="color: #458; font-weight: bold; line-height: 26px;">TryWithResource</span>&nbsp;</span>{<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span>&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">static</span>&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">void</span>&nbsp;<span class="hljs-title" style="color: #900; font-weight: bold; line-height: 26px;">main</span><span class="hljs-params" style="line-height: 26px;">(String[]&nbsp;args)</span>&nbsp;</span>{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">try</span>&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;test();<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">catch</span>&nbsp;(Exception&nbsp;e)&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;e.printStackTrace();<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">private</span>&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">static</span>&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">void</span>&nbsp;<span class="hljs-title" style="color: #900; font-weight: bold; line-height: 26px;">test</span><span class="hljs-params" style="line-height: 26px;">()</span>&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">throws</span>&nbsp;Exception&nbsp;</span>{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Connection&nbsp;conn&nbsp;=&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">null</span>;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">try</span>&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;conn&nbsp;=&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">new</span>&nbsp;Connection();<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;conn.sendData();<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">finally</span>&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">if</span>&nbsp;(conn&nbsp;!=&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">null</span>)&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;conn.close();<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>}<br></code></pre>
+            <p data-tool="mdnice编辑器" style="padding-top: 8px; padding-bottom: 8px; color: black; margin: 10px 10px; line-height: 1.75; letter-spacing: 0.2em; font-size: 15px; word-spacing: 0.1em;">运行之后我们发现：</p>
+            <pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px;"><code class="hljs" style="overflow-x: auto; padding: 16px; color: #333; background: #f8f8f8; display: -webkit-box; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; border-radius: 0px; font-size: 12px; -webkit-overflow-scrolling: touch;">basic.exception.MyException: close
+                at basic.exception.Connection.close(Connection.java:10)
+                at basic.exception.TryWithResource.test(TryWithResource.java:82)
+                at basic.exception.TryWithResource.main(TryWithResource.java:7)
+                ......
+            </code></pre>
+            <p data-tool="mdnice编辑器" style="padding-top: 8px; padding-bottom: 8px; color: black; margin: 10px 10px; line-height: 1.75; letter-spacing: 0.2em; font-size: 15px; word-spacing: 0.1em;">好的，问题来了，由于我们一次只能抛出一个异常，所以在最上层看到的是最后一个抛出的异常——也就是<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; color: #1e6bb8; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all;">close</code>方法抛出的<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; color: #1e6bb8; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all;">MyException</code>，而<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; color: #1e6bb8; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all;">sendData</code>抛出的<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; color: #1e6bb8; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all;">Exception</code>被忽略了。这就是所谓的异常屏蔽。由于异常信息的丢失，异常屏蔽可能会导致某些bug变得极其难以发现，程序员们不得不加班加点地找bug，如此毒瘤，怎能不除！幸好，为了解决这个问题，从Java 1.7开始，大佬们为<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; color: #1e6bb8; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all;">Throwable</code>类新增了<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; color: #1e6bb8; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all;">addSuppressed</code>方法，支持将一个异常附加到另一个异常身上，从而避免异常屏蔽。那么被屏蔽的异常信息会通过怎样的格式输出呢？我们再运行一遍刚才用try-with-resource包裹的main方法：</p>
+            <pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px;"><code class="hljs" style="overflow-x: auto; padding: 16px; color: #333; background: #f8f8f8; display: -webkit-box; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; border-radius: 0px; font-size: 12px; -webkit-overflow-scrolling: touch;">java.lang.Exception:&nbsp;send&nbsp;data<br><br>&nbsp;at&nbsp;basic.exception.Connection.sendData(Connection.java:<span class="hljs-number" style="color: #008080; line-height: 26px;">5</span>)<br>&nbsp;at&nbsp;basic.exception.TryWithResource.main(TryWithResource.java:<span class="hljs-number" style="color: #008080; line-height: 26px;">14</span>)<br>&nbsp;......<br>&nbsp;Suppressed:&nbsp;basic.exception.MyException:&nbsp;close<br>&nbsp;&nbsp;at&nbsp;basic.exception.Connection.close(Connection.java:<span class="hljs-number" style="color: #008080; line-height: 26px;">10</span>)<br>&nbsp;&nbsp;at&nbsp;basic.exception.TryWithResource.main(TryWithResource.java:<span class="hljs-number" style="color: #008080; line-height: 26px;">15</span>)<br>&nbsp;&nbsp;...&nbsp;<span class="hljs-number" style="color: #008080; line-height: 26px;">5</span>&nbsp;more<br></code></pre>
+            <p data-tool="mdnice编辑器" style="padding-top: 8px; padding-bottom: 8px; color: black; margin: 10px 10px; line-height: 1.75; letter-spacing: 0.2em; font-size: 15px; word-spacing: 0.1em;">可以看到，异常信息中多了一个<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; color: #1e6bb8; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all;">Suppressed</code>的提示，告诉我们这个异常其实由两个异常组成，<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; color: #1e6bb8; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all;">MyException</code>是被Suppressed的异常。可喜可贺！</p>
+            <h3 data-tool="mdnice编辑器" style="margin-top: 30px; margin-bottom: 15px; font-weight: bold; font-size: 18px; color: #0e88eb;"><span class="prefix" style="display: none;"></span><span class="content" style="font-size: 18px; color: #0e88eb;">一个小问题</span><span class="suffix" style="display: none;"></span></h3>
+            <p data-tool="mdnice编辑器" style="padding-top: 8px; padding-bottom: 8px; color: black; margin: 10px 10px; line-height: 1.75; letter-spacing: 0.2em; font-size: 15px; word-spacing: 0.1em;">在使用try-with-resource的过程中，一定需要了解资源的<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; color: #1e6bb8; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all;">close</code>方法内部的实现逻辑。否则还是可能会导致资源泄露。</p>
+            <p data-tool="mdnice编辑器" style="padding-top: 8px; padding-bottom: 8px; color: black; margin: 10px 10px; line-height: 1.75; letter-spacing: 0.2em; font-size: 15px; word-spacing: 0.1em;">举个例子，在Java BIO中采用了大量的装饰器模式。当调用装饰器的<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; color: #1e6bb8; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all;">close</code>方法时，本质上是调用了装饰器内部包裹的流的<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; color: #1e6bb8; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all;">close</code>方法。比如：</p>
+            <pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px;"><code class="hljs" style="overflow-x: auto; padding: 16px; color: #333; background: #f8f8f8; display: -webkit-box; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; border-radius: 0px; font-size: 12px; -webkit-overflow-scrolling: touch;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span>&nbsp;<span class="hljs-class" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">class</span>&nbsp;<span class="hljs-title" style="color: #458; font-weight: bold; line-height: 26px;">TryWithResource</span>&nbsp;</span>{<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span>&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">static</span>&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">void</span>&nbsp;<span class="hljs-title" style="color: #900; font-weight: bold; line-height: 26px;">main</span><span class="hljs-params" style="line-height: 26px;">(String[]&nbsp;args)</span>&nbsp;</span>{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">try</span>&nbsp;(FileInputStream&nbsp;fin&nbsp;=&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">new</span>&nbsp;FileInputStream(<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">new</span>&nbsp;File(<span class="hljs-string" style="color: #d14; line-height: 26px;">"input.txt"</span>));<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GZIPOutputStream&nbsp;out&nbsp;=&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">new</span>&nbsp;GZIPOutputStream(<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">new</span>&nbsp;FileOutputStream(<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">new</span>&nbsp;File(<span class="hljs-string" style="color: #d14; line-height: 26px;">"out.txt"</span>))))&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">byte</span>[]&nbsp;buffer&nbsp;=&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">new</span>&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">byte</span>[<span class="hljs-number" style="color: #008080; line-height: 26px;">4096</span>];<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">int</span>&nbsp;read;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">while</span>&nbsp;((read&nbsp;=&nbsp;fin.read(buffer))&nbsp;!=&nbsp;-<span class="hljs-number" style="color: #008080; line-height: 26px;">1</span>)&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;out.write(buffer,&nbsp;<span class="hljs-number" style="color: #008080; line-height: 26px;">0</span>,&nbsp;read);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">catch</span>&nbsp;(IOException&nbsp;e)&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;e.printStackTrace();<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>}<br></code></pre>
+            <p data-tool="mdnice编辑器" style="padding-top: 8px; padding-bottom: 8px; color: black; margin: 10px 10px; line-height: 1.75; letter-spacing: 0.2em; font-size: 15px; word-spacing: 0.1em;">在上述代码中，我们从<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; color: #1e6bb8; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all;">FileInputStream</code>中读取字节，并且写入到<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; color: #1e6bb8; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all;">GZIPOutputStream</code>中。<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; color: #1e6bb8; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all;">GZIPOutputStream</code>实际上是<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; color: #1e6bb8; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all;">FileOutputStream</code>的装饰器。由于try-with-resource的特性，实际编译之后的代码会在后面带上finally代码块，并且在里面调用fin.close()方法和out.close()方法。我们再来看<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; color: #1e6bb8; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all;">GZIPOutputStream</code>类的close方法：</p>
+            <pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px;"><code class="hljs" style="overflow-x: auto; padding: 16px; color: #333; background: #f8f8f8; display: -webkit-box; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; border-radius: 0px; font-size: 12px; -webkit-overflow-scrolling: touch;"><span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span>&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">void</span>&nbsp;<span class="hljs-title" style="color: #900; font-weight: bold; line-height: 26px;">close</span><span class="hljs-params" style="line-height: 26px;">()</span>&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">throws</span>&nbsp;IOException&nbsp;</span>{<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">if</span>&nbsp;(!closed)&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;finish();<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">if</span>&nbsp;(usesDefaultDeflater)<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def.end();<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;out.close();<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;closed&nbsp;=&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">true</span>;<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>}<br></code></pre>
+            <p data-tool="mdnice编辑器" style="padding-top: 8px; padding-bottom: 8px; color: black; margin: 10px 10px; line-height: 1.75; letter-spacing: 0.2em; font-size: 15px; word-spacing: 0.1em;">我们可以看到，out变量实际上代表的是被装饰的<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; color: #1e6bb8; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all;">FileOutputStream</code>类。在调用out变量的<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; color: #1e6bb8; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all;">close</code>方法之前，<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; color: #1e6bb8; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all;">GZIPOutputStream</code>还做了<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; color: #1e6bb8; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all;">finish</code>操作，该操作还会继续往<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; color: #1e6bb8; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all;">FileOutputStream</code>中写压缩信息，此时如果出现异常，则会<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; color: #1e6bb8; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all;">out.close()</code>方法被略过，然而这个才是最底层的资源关闭方法。正确的做法是应该在try-with-resource中单独声明最底层的资源，保证对应的<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; color: #1e6bb8; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all;">close</code>方法一定能够被调用。在刚才的例子中，我们需要单独声明每个<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; color: #1e6bb8; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all;">FileInputStream</code>以及<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; color: #1e6bb8; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all;">FileOutputStream</code>：</p>
+            <pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px;"><code class="hljs" style="overflow-x: auto; padding: 16px; color: #333; background: #f8f8f8; display: -webkit-box; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; border-radius: 0px; font-size: 12px; -webkit-overflow-scrolling: touch;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span>&nbsp;<span class="hljs-class" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">class</span>&nbsp;<span class="hljs-title" style="color: #458; font-weight: bold; line-height: 26px;">TryWithResource</span>&nbsp;</span>{<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span>&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">static</span>&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">void</span>&nbsp;<span class="hljs-title" style="color: #900; font-weight: bold; line-height: 26px;">main</span><span class="hljs-params" style="line-height: 26px;">(String[]&nbsp;args)</span>&nbsp;</span>{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">try</span>&nbsp;(FileInputStream&nbsp;fin&nbsp;=&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">new</span>&nbsp;FileInputStream(<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">new</span>&nbsp;File(<span class="hljs-string" style="color: #d14; line-height: 26px;">"input.txt"</span>));<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FileOutputStream&nbsp;fout&nbsp;=&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">new</span>&nbsp;FileOutputStream(<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">new</span>&nbsp;File(<span class="hljs-string" style="color: #d14; line-height: 26px;">"out.txt"</span>));<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GZIPOutputStream&nbsp;out&nbsp;=&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">new</span>&nbsp;GZIPOutputStream(fout))&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">byte</span>[]&nbsp;buffer&nbsp;=&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">new</span>&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">byte</span>[<span class="hljs-number" style="color: #008080; line-height: 26px;">4096</span>];<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">int</span>&nbsp;read;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">while</span>&nbsp;((read&nbsp;=&nbsp;fin.read(buffer))&nbsp;!=&nbsp;-<span class="hljs-number" style="color: #008080; line-height: 26px;">1</span>)&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;out.write(buffer,&nbsp;<span class="hljs-number" style="color: #008080; line-height: 26px;">0</span>,&nbsp;read);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">catch</span>&nbsp;(IOException&nbsp;e)&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;e.printStackTrace();<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>}<br></code></pre>
+            <p data-tool="mdnice编辑器" style="padding-top: 8px; padding-bottom: 8px; color: black; margin: 10px 10px; line-height: 1.75; letter-spacing: 0.2em; font-size: 15px; word-spacing: 0.1em;">由于编译器会自动生成<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; color: #1e6bb8; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all;">fout.close()</code>的代码，这样肯定能够保证真正的流被关闭。</p>
+            </section>
+        </div>
+      </div>
+    </div>
+    <a id="back_to_top" href="#" class="back_to_top"><span>△</span></a>
   </div>
-  <a id="back_to_top" href="#" class="back_to_top"><span>△</span></a>
-</div>
 
-<footer class="footer">
-  <div class="powered_by" style="color: #cccccc;">
-    Proudly published with <a href="http://www.gohugo.io/">Hugo&nbsp;&nbsp;</a>
-    Theme <a href="https://github.com/imzeuk/hugo-theme-zozo themes/zozo">zozo</a>
-  </div>
+  <footer class="footer">
+    <div class="powered_by" style="color: #cccccc;">
+      Proudly published with <a href="http://www.gohugo.io/">Hugo&nbsp;&nbsp;</a>
+      Theme <a href="https://github.com/imzeuk/hugo-theme-zozo themes/zozo">zozo</a>
+    </div>
 
-  
-</footer>
+
+  </footer>
 
 
 
-<script src="https://ffppss.github.io/js/jquery-3.3.1.min.js"></script>
-<script src="https://ffppss.github.io/js/zozo.js"></script>
-<script src="https://ffppss.github.io/js/highlight.pack.js"></script>
-<link  href="https://ffppss.github.io/css/fancybox.min.css" rel="stylesheet">
-<script src="https://ffppss.github.io/js/fancybox.min.js"></script>
+  <script src="https://ffppss.github.io/js/jquery-3.3.1.min.js"></script>
+  <script src="https://ffppss.github.io/js/zozo.js"></script>
+  <script src="https://ffppss.github.io/js/highlight.pack.js"></script>
+  <link href="https://ffppss.github.io/css/fancybox.min.css" rel="stylesheet">
+  <script src="https://ffppss.github.io/js/fancybox.min.js"></script>
 
-<script>hljs.initHighlightingOnLoad()</script>
+  <script>
+    hljs.initHighlightingOnLoad()
+  </script>
 
 
-  <script type="text/javascript" async src="https://cdn.bootcss.com/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-MathJax.Hub.Config({
-  tex2jax: {
-    inlineMath: [['$','$'], ['\\(','\\)']],
-    displayMath: [['$$','$$'], ['\[\[','\]\]']],
-    processEscapes: true,
-    processEnvironments: true,
-    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
-    TeX: { equationNumbers: { autoNumber: "AMS" },
-         extensions: ["AMSmath.js", "AMSsymbols.js"] }
-  }
-});
+  <script type="text/javascript" async
+    src="https://cdn.bootcss.com/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [
+          ['$', '$'],
+          ['\\(', '\\)']
+        ],
+        displayMath: [
+          ['$$', '$$'],
+          ['\[\[', '\]\]']
+        ],
+        processEscapes: true,
+        processEnvironments: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+        TeX: {
+          equationNumbers: {
+            autoNumber: "AMS"
+          },
+          extensions: ["AMSmath.js", "AMSsymbols.js"]
+        }
+      }
+    });
 
-MathJax.Hub.Queue(function() {
-    
-    
-    
-    var all = MathJax.Hub.getAllJax(), i;
-    for(i = 0; i < all.length; i += 1) {
+    MathJax.Hub.Queue(function () {
+
+
+
+      var all = MathJax.Hub.getAllJax(),
+        i;
+      for (i = 0; i < all.length; i += 1) {
         all[i].SourceElement().parentNode.className += ' has-jax';
-    }
-});
-</script>
+      }
+    });
+  </script>
 
-<style>
-code.has-jax {
-    font: inherit;
-    font-size: 100%;
-    background: inherit;
-    border: inherit;
-    color: #515151;
-}
-</style>
+  <style>
+    code.has-jax {
+      font: inherit;
+      font-size: 100%;
+      background: inherit;
+      border: inherit;
+      color: #515151;
+    }
+  </style>
 
 
 
@@ -429,4 +273,5 @@ code.has-jax {
 
 
 </body>
+
 </html>

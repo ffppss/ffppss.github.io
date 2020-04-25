@@ -3,17 +3,22 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://ffppss.github.io/tags/a/</loc>
+    <loc>https://ffppss.github.io/tags/arrays/</loc>
     <lastmod>2020-04-24T23:49:40+08:00</lastmod>
   </url>
   
   <url>
-    <loc>https://ffppss.github.io/tags/b/</loc>
+    <loc>https://ffppss.github.io/tags/collections/</loc>
     <lastmod>2020-04-24T23:49:40+08:00</lastmod>
   </url>
   
   <url>
-    <loc>https://ffppss.github.io/tags/c/</loc>
+    <loc>https://ffppss.github.io/posts/collections-%E5%B7%A5%E5%85%B7%E7%B1%BB%E5%92%8C-arrays-%E5%B7%A5%E5%85%B7%E7%B1%BB%E5%B8%B8%E8%A7%81%E6%96%B9%E6%B3%95/</loc>
+    <lastmod>2020-04-24T23:49:40+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://ffppss.github.io/tags/java/</loc>
     <lastmod>2020-04-24T23:49:40+08:00</lastmod>
   </url>
   
@@ -28,22 +33,12 @@
   </url>
   
   <url>
-    <loc>https://ffppss.github.io/posts/collections-%E5%B7%A5%E5%85%B7%E7%B1%BB%E5%92%8C-arrays-%E5%B7%A5%E5%85%B7%E7%B1%BB%E5%B8%B8%E8%A7%81%E6%96%B9%E6%B3%95/</loc>
-    <lastmod>2020-04-24T23:49:40+08:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://ffppss.github.io/tags/base64/</loc>
     <lastmod>2020-04-24T17:49:40+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://ffppss.github.io/tags/interface/</loc>
-    <lastmod>2020-04-24T17:49:40+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://ffppss.github.io/tags/java/</loc>
     <lastmod>2020-04-24T17:49:40+08:00</lastmod>
   </url>
   
